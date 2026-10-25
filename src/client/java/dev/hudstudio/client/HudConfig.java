@@ -13,7 +13,11 @@ public final class HudConfig {
     public Map<String, Element> elements = new LinkedHashMap<>();
     public List<Element> slots = new ArrayList<>();
     public Map<String,Element> tweaks = new LinkedHashMap<>();
-    public float zoomFactor=4,freecamSpeed=.6f;
+    public float zoomFactor=3,freecamSpeed=1;
+    public boolean zoomShowHud=true,zoomCinematic=false;
+    public boolean freecamHold=false,freecamLookFlight=false,freecamDisableOnDamage=true;
+    public boolean freecamShowPlayer=true,freecamShowHud=true,freecamShowSubmersion=false,freecamCollision=false;
+    public float freecamVerticalSpeed=1,freecamSprintMultiplier=1.5f;
     public boolean snap = true;
     public int themeColor = 0xff101010;
     public float opacity = .85f;
@@ -49,8 +53,10 @@ public final class HudConfig {
             if (c == null) return defaults();
             c.themeColor |= 0xff000000;
             c.opacity = Float.isFinite(c.opacity) ? Math.clamp(c.opacity,0,1) : .85f;
-            c.zoomFactor=Float.isFinite(c.zoomFactor)?Math.clamp(c.zoomFactor,2,12):4;
-            c.freecamSpeed=Float.isFinite(c.freecamSpeed)?Math.clamp(c.freecamSpeed,.1f,3):.6f;
+            c.zoomFactor=Float.isFinite(c.zoomFactor)?Math.clamp(c.zoomFactor,1,50):3;
+            c.freecamSpeed=Float.isFinite(c.freecamSpeed)?Math.clamp(c.freecamSpeed,.1f,3):1;
+            c.freecamVerticalSpeed=Float.isFinite(c.freecamVerticalSpeed)?Math.clamp(c.freecamVerticalSpeed,.1f,3):1;
+            c.freecamSprintMultiplier=Float.isFinite(c.freecamSprintMultiplier)?Math.clamp(c.freecamSprintMultiplier,1,5):1.5f;
             if(c.tweaks==null)c.tweaks=new LinkedHashMap<>();
             for(String id:TWEAKS) {
                 var e=c.tweaks.get(id);

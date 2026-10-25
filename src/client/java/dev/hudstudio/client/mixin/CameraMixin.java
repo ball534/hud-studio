@@ -22,6 +22,14 @@ public abstract class CameraMixin {
         else {setPosition(player.getEyePosition(partial));move(-getMaxZoom(4*player.getScale()),0,0);}
         ci.cancel();
     }
-    @Inject(method="calculateFov",at=@At("RETURN"),cancellable=true)
+    @Inject(method={"calculateFov","calculateHudFov"},at=@At("RETURN"),cancellable=true)
     private void studio_zoom(float partial,CallbackInfoReturnable<Float> ci) {ci.setReturnValue(ci.getReturnValue()/ClientTweaks.zoomFactor());}
+    @Inject(method="getFluidInCamera",at=@At("HEAD"),cancellable=true)
+    private void studio_clearFreecamFog(CallbackInfoReturnable<net.minecraft.world.level.material.FogType> ci) {
+        if(ClientTweaks.freecam() && !dev.hudstudio.client.HudStudioClient.config.freecamShowSubmersion)ci.setReturnValue(net.minecraft.world.level.material.FogType.NONE);
+    }
+    @Inject(method="extractRenderState",at=@At("TAIL"))
+    private void studio_freecamCulling(net.minecraft.client.renderer.state.level.CameraRenderState state,net.minecraft.client.DeltaTracker delta,CallbackInfo ci) {
+        if(ClientTweaks.freecam())state.smartCull=false;
+    }
 }

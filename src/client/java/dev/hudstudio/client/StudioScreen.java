@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 public abstract class StudioScreen extends Screen {
     protected final Screen parent;
     protected StudioScreen(String title,Screen parent) {super(Component.literal(title));this.parent=parent;}
-    @Override public boolean isPauseScreen() {return false;}
+    @Override public boolean isPauseScreen() {return true;}
     @Override public void extractBackground(GuiGraphicsExtractor g,int mx,int my,float a) {
         g.fill(0,0,width,height,StudioUi.BG);
     }

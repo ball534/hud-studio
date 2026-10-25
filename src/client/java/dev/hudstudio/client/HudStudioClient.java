@@ -9,6 +9,6 @@ public final class HudStudioClient implements ClientModInitializer {
     @Override public void onInitializeClient() {
         config = HudConfig.load();
         ClientTweaks.init();
-        HudElementRegistry.addLast(Identifier.fromNamespaceAndPath("hud-studio","widgets"),(g,d) -> HudWidgets.draw(g,false));
+        HudElementRegistry.addLast(Identifier.fromNamespaceAndPath("hud-studio","widgets"),(g,d) -> {if(!ClientTweaks.hideHud())HudWidgets.draw(g,false);});
     }
 }

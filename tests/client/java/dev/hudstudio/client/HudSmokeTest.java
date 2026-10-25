@@ -16,6 +16,16 @@ import java.util.*;
 public final class HudSmokeTest implements FabricClientGameTest {
     private static MouseButtonEvent mouse(double x,double y,int button) {return new MouseButtonEvent(x,y,new MouseButtonInfo(button,0));}
     private static void check(boolean condition,String message) {if(!condition)throw new AssertionError(message);}
+    private static boolean playerRendered(Minecraft mc) {
+        try {
+            var state=new net.minecraft.client.renderer.state.level.LevelRenderState();
+            var method=net.minecraft.client.renderer.extract.LevelExtractor.class.getDeclaredMethod("extractVisibleEntities",net.minecraft.client.Camera.class,net.minecraft.client.renderer.culling.Frustum.class,net.minecraft.client.DeltaTracker.class,state.getClass());
+            method.setAccessible(true);
+            var camera=mc.gameRenderer.mainCamera();
+            method.invoke(mc.levelExtractor,camera,camera.getCullFrustum(),mc.getDeltaTracker(),state);
+            return state.entityRenderStates.stream().anyMatch(e->e.entityType==net.minecraft.world.entity.EntityTypes.PLAYER);
+        }catch(ReflectiveOperationException e){throw new RuntimeException(e);}
+    }
     private static EditBox search(Minecraft mc) {
         for(var child:mc.gui.screen().children())if(child instanceof EditBox box)return box;
         throw new AssertionError("No search bar");
@@ -52,9 +62,9 @@ public final class HudSmokeTest implements FabricClientGameTest {
             for(String id:new String[]{"mouse","space","sneak","sprint"})check(HudLayout.base(id,427,240).w()==64 && HudLayout.base(id,427,240).h()==20,"Keystroke dimensions inconsistent");
             mc.gui.setScreen(ModMenu.getConfigScreen("hud-studio",mc.gui.screen()));
         });
-        c.waitForScreen(HudSettingsScreen.class);c.waitTicks(3);
+        c.waitForScreen(HudSettingsScreen.class);c.waitTicks(3);click(c,"Keystrokes");
         c.runOnClient(mc -> {
-            check(modules(mc).equals(List.of("WASD","LMB / RMB","SPACE","SNEAK","SPRINT","Left CPS","Right CPS")),"Keystrokes category incorrect");
+            check(modules(mc).equals(List.of("WASD","LMB / RMB","Left CPS","Right CPS","SPACE","SNEAK","SPRINT")),"Keystrokes category incorrect");
             int appearance=999,keystrokes=0;
             for(var child:mc.gui.screen().children())if(child instanceof StudioUi.Action a){if(a.getMessage().getString().equals("Appearance"))appearance=a.getY();if(a.getMessage().getString().equals("Keystrokes"))keystrokes=a.getY();}
             check(appearance<keystrokes,"Appearance not above categories");
@@ -72,21 +82,38 @@ public final class HudSmokeTest implements FabricClientGameTest {
         c.runOnClient(mc -> check(modules(mc).isEmpty(),"Unmatched search did not clear modules"));
         c.runOnClient(mc -> search(mc).setValue(""));
         click(c,"Stats");
-        c.runOnClient(mc -> check(modules(mc).equals(List.of("FPS","Speed","Clock","Memory","Combo Meter")),"Stats category contains CPS or lacks combo"));
-        click(c,"Client Tweaks");
-        c.runOnClient(mc -> check(modules(mc).size()==5,"Client tweaks missing"));
+        c.runOnClient(mc -> check(modules(mc).equals(List.of("FPS","Speed","Clock","Memory")),"Stats category contains CPS or lacks combo"));
+        click(c,"Camera");
+        c.runOnClient(mc -> check(modules(mc).equals(List.of("Zoom","Freelook","Freecam")),"Client tweaks missing"));
         c.takeScreenshot("client-tweaks");click(c,"Zoom");
         c.waitForScreen(TweakSettingsScreen.class);c.takeScreenshot("zoom-settings");
+        click(c,"Show HUD: ON");click(c,"Cinematic zoom: OFF");
+        c.runOnClient(mc -> {
+            var loaded=HudConfig.load();
+            check(!loaded.zoomShowHud && loaded.zoomCinematic,"Zoom options not saved");
+            check(ClientTweaks.zoomKey.getDefaultKey().getValue()==com.mojang.blaze3d.platform.InputConstants.KEY_Z,"Default zoom key is not Z");
+        });
+        click(c,"Show HUD: OFF");click(c,"Cinematic zoom: ON");
         c.runOnClient(mc -> {
             String label="Key: "+ClientTweaks.zoomKey.getTranslatedKeyMessage().getString();
             for(var child:List.copyOf(mc.gui.screen().children()))if(child instanceof StudioUi.Action a && a.getMessage().getString().equals(label)){a.onPress(new MouseButtonInfo(1,0));break;}
             mc.gui.screen().keyPressed(new net.minecraft.client.input.KeyEvent(com.mojang.blaze3d.platform.InputConstants.KEY_Z,0,0));
             check(ClientTweaks.zoomKey.matches(new net.minecraft.client.input.KeyEvent(com.mojang.blaze3d.platform.InputConstants.KEY_Z,0,0)),"Key rebinding failed");
-            ClientTweaks.zoomKey.setKey(com.mojang.blaze3d.platform.InputConstants.Type.KEYBOARD.getOrCreate(com.mojang.blaze3d.platform.InputConstants.KEY_C));net.minecraft.client.KeyMapping.resetMapping();mc.options.save();
+            ClientTweaks.zoomKey.setKey(com.mojang.blaze3d.platform.InputConstants.Type.KEYBOARD.getOrCreate(com.mojang.blaze3d.platform.InputConstants.KEY_Z));net.minecraft.client.KeyMapping.resetMapping();mc.options.save();
         });
         click(c,"Back");
-        click(c,"Vanilla HUD");
-        c.runOnClient(mc -> check(modules(mc).equals(List.of("Scoreboard","Boss bars","Player tab","Status effects","Offhand")),"Vanilla HUD category incorrect"));
+        click(c,"Freecam");click(c,"> Controls");click(c,"Activation: Toggle");click(c,"Exit on damage: ON");
+        click(c,"Movement");click(c,"Flight: Horizontal");click(c,"Block collision: OFF");c.takeScreenshot("freecam-movement-settings");
+        click(c,"Display");click(c,"Show player: ON");click(c,"Show HUD: ON");click(c,"Submersion fog: OFF");c.takeScreenshot("freecam-display-settings");
+        c.runOnClient(mc -> {
+            var loaded=HudConfig.load();
+            check(loaded.freecamHold && loaded.freecamLookFlight && loaded.freecamCollision && !loaded.freecamDisableOnDamage
+                && !loaded.freecamShowPlayer && !loaded.freecamShowHud && loaded.freecamShowSubmersion,"Freecam options not saved");
+        });
+        click(c,"Back");click(c,"Visuals");
+        c.runOnClient(mc -> check(modules(mc).equals(List.of("No camera shake","No explosions")),"Visual effects category incorrect"));
+        click(c,"Game HUD");
+        c.runOnClient(mc -> check(modules(mc).equals(List.of("Scoreboard","Boss bars","Status effects","Player tab","Combo Meter")),"Vanilla HUD category incorrect"));
         click(c,"Keystrokes");click(c,"WASD");c.waitForScreen(HudEditorScreen.class);
         c.runOnClient(mc -> {
             var screen=mc.gui.screen();var config=HudStudioClient.config;
@@ -137,7 +164,7 @@ public final class HudSmokeTest implements FabricClientGameTest {
             });
             c.waitTicks(5);c.takeScreenshot("vanilla-defaults");
             c.runOnClient(mc -> mc.gui.setScreen(ModMenu.getConfigScreen("hud-studio",null)));
-            click(c,"Custom Slots");click(c,"Add slot");click(c,"Helmet");click(c,"Add display");
+            click(c,"Inventory");click(c,"Add slot");click(c,"Helmet");click(c,"Add display");
             c.waitForScreen(HudEditorScreen.class);
             c.runOnClient(mc -> {
                 var e=HudStudioClient.config.slots.getFirst();var screen=mc.gui.screen();
@@ -290,6 +317,11 @@ public final class HudSmokeTest implements FabricClientGameTest {
             config.tweaks.values().forEach(e->check(!e.visible,"Client tweak enabled by default"));
         });
         c.waitTicks(3);c.takeScreenshot("vertical-hotbar");
+        c.runOnClient(mc -> mc.gui.setScreen(new HudSettingsScreen(null)));
+        c.waitTicks(3);
+        c.runOnClient(mc -> check(mc.isPaused(),"Module menu did not pause single player"));
+        c.runOnClient(mc -> mc.gui.screen().onClose());c.waitTicks(3);
+        c.runOnClient(mc -> check(!mc.isPaused(),"Closing module menu did not resume game"));
         c.runOnClient(mc -> {
             HudStudioClient.config.tweaks.get("no_explosions").visible=true;
             check(mc.particleEngine.createParticle(net.minecraft.core.particles.ParticleTypes.EXPLOSION,0,0,0,0,0,0)==null,"Explosion particle not suppressed");
@@ -309,6 +341,8 @@ public final class HudSmokeTest implements FabricClientGameTest {
             HudStudioClient.config.tweaks.get("freecam").visible=true;
             ClientTweaks.toggleFreecam(mc);
             check(ClientTweaks.freecam(),"Freecam did not enable");
+            check(mc.getCameraEntity()!=mc.player,"Freecam did not detach rendering while retaining player simulation");
+            ClientTweaks.turn(0,500);
             mc.options.keyUp.setDown(true);
         });
         var before=c.computeOnClient(mc->new double[]{mc.player.getX(),mc.player.getZ(),mc.player.getYRot(),mc.player.getXRot()});
@@ -317,12 +351,55 @@ public final class HudSmokeTest implements FabricClientGameTest {
         c.runOnClient(mc -> {
             mc.options.keyUp.setDown(false);
             check(ClientTweaks.position(1).distanceTo(cameraBefore)>1,"Freecam camera did not move");
+            check(Math.abs(ClientTweaks.position(1).y-cameraBefore.y)<.001,"Looking down changed freecam flight height");
             check(Math.abs(mc.player.getX()-before[0])<.01 && Math.abs(mc.player.getZ()-before[1])<.01,"Freecam moved player body");
             ClientTweaks.turn(100,40);
             check(mc.player.getYRot()==before[2] && mc.player.getXRot()==before[3],"Detached camera changed player aim");
         });
         c.waitTicks(3);c.takeScreenshot("freecam");
-        c.runOnClient(mc -> {ClientTweaks.stop(mc);check(mc.options.getCameraType()==net.minecraft.client.CameraType.FIRST_PERSON,"Freecam view not restored");
+        c.runOnClient(mc -> {
+            ClientTweaks.turn(-ClientTweaks.yaw()/.15,-ClientTweaks.pitch()/.15);
+            mc.options.keyRight.setDown(true);
+        });
+        var strafeStart=c.computeOnClient(mc->ClientTweaks.position(1));c.waitTicks(3);
+        c.runOnClient(mc -> {
+            mc.options.keyRight.setDown(false);
+            check(ClientTweaks.position(1).x<strafeStart.x-1,"D moves left on screen at yaw zero");
+            mc.options.keyLeft.setDown(true);
+        });
+        var rightEnd=c.computeOnClient(mc->ClientTweaks.position(1));c.waitTicks(3);
+        c.runOnClient(mc -> {
+            mc.options.keyLeft.setDown(false);
+            check(ClientTweaks.position(1).x>rightEnd.x+1,"A moves right on screen at yaw zero");
+            ClientTweaks.stop(mc);ClientTweaks.toggleFreecam(mc);
+            ClientTweaks.turn(0,-ClientTweaks.pitch()/.15);
+            mc.options.keyDown.setDown(true);
+        });c.waitTicks(7);
+        c.runOnClient(mc -> mc.options.keyDown.setDown(false));c.waitTicks(3);
+        c.takeScreenshot("freecam-visible-body");
+        c.runOnClient(mc -> {
+            check(playerRendered(mc),"Local player body missing from freecam render state");
+        });
+        c.runOnClient(mc -> HudStudioClient.config.freecamShowPlayer=false);c.waitTicks(3);
+        c.runOnClient(mc -> check(!playerRendered(mc),"Show player OFF did not hide player"));
+        c.runOnClient(mc -> {
+            HudStudioClient.config.freecamShowPlayer=true;
+            HudStudioClient.config.freecamShowHud=false;
+            check(ClientTweaks.hideHud(),"Freecam HUD toggle ignored");
+        });c.waitTicks(3);c.takeScreenshot("freecam-hidden-hud");
+        c.runOnClient(mc -> HudStudioClient.config.freecamShowHud=true);
+        c.runOnClient(mc -> {ClientTweaks.stop(mc);check(mc.options.getCameraType()==net.minecraft.client.CameraType.FIRST_PERSON && mc.getCameraEntity()==mc.player,"Freecam view not restored");
+            ClientTweaks.toggleFreecam(mc);
+        });
+        serverContext.runCommand("damage @p 1 minecraft:generic");
+        c.waitTicks(5);
+        c.runOnClient(mc -> {
+            check(!ClientTweaks.freecam() && mc.getCameraEntity()==mc.player,"Damage did not return freecam to player");
+            HudStudioClient.config.freecamHold=true;ClientTweaks.freecamKey.setDown(true);
+        });c.waitTicks(2);
+        c.runOnClient(mc -> {check(ClientTweaks.freecam(),"Hold freecam did not start");ClientTweaks.freecamKey.setDown(false);});c.waitTicks(2);
+        c.runOnClient(mc -> {
+            check(!ClientTweaks.freecam(),"Hold freecam did not stop on release");HudStudioClient.config.freecamHold=false;
             HudStudioClient.config.tweaks.get("freelook").visible=true;ClientTweaks.freelookKey.setDown(true);
         });
         c.waitTicks(2);
@@ -337,6 +414,25 @@ public final class HudSmokeTest implements FabricClientGameTest {
         c.waitTicks(3);
         c.runOnClient(mc -> check(mc.gameRenderer.mainCamera().getFov()<30,"Zoom did not narrow camera FOV"));
         c.takeScreenshot("zoom");
+        c.runOnClient(mc -> {
+            float start=ClientTweaks.zoomFactor();
+            HudStudioClient.config.zoomShowHud=false;HudStudioClient.config.zoomCinematic=true;
+            check(ClientTweaks.hideHud() && ClientTweaks.cinematicZoom(),"Zoom HUD/cinematic options ignored");
+            check(!mc.options.smoothCamera,"Cinematic zoom changed saved camera option");
+            int selected=mc.player.getInventory().getSelectedSlot();
+            mc.mouseHandler.onScroll(mc.getWindow().handle(),0,1);
+            check(Math.abs(ClientTweaks.zoomFactor()-start*1.1f)<.001,"Zoom scroll did not increase magnification by 10 percent");
+            check(mc.player.getInventory().getSelectedSlot()==selected,"Zoom scroll changed hotbar selection");
+            for(int i=0;i<100;i++)mc.mouseHandler.onScroll(mc.getWindow().handle(),0,1);
+            check(ClientTweaks.zoomFactor()==50,"Zoom maximum incorrect");
+            for(int i=0;i<100;i++)mc.mouseHandler.onScroll(mc.getWindow().handle(),0,-1);
+            check(ClientTweaks.zoomFactor()==1,"Zoom minimum incorrect");
+            ClientTweaks.zoomKey.setDown(false);check(ClientTweaks.zoomFactor()==1,"Zoom remained active on release");
+            check(!ClientTweaks.hideHud() && !ClientTweaks.cinematicZoom(),"Zoom display options remained active on release");
+            HudStudioClient.config.zoomShowHud=true;HudStudioClient.config.zoomCinematic=false;
+            ClientTweaks.zoomKey.setDown(true);
+            check(ClientTweaks.zoomFactor()==HudStudioClient.config.zoomFactor,"Zoom did not reset on next hold");
+        });
         c.runOnClient(mc -> {
             ClientTweaks.zoomKey.setDown(false);
             HudStudioClient.config.elements.get("combo").visible=true;

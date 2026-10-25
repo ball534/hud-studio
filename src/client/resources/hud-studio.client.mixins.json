@@ -8,6 +8,8 @@
         "CameraMixin",
         "ShakeMixin",
         "FreecamInputMixin",
+        "FreecamPlayerMixin",
+        "FreecamRenderMixin",
         "FreecamInteractionMixin",
         "ParticleMixin",
         "ExplosionDebrisMixin",

@@ -12,7 +12,7 @@ import java.util.*;
 
 public final class HudSettingsScreen extends StudioScreen {
     private static final int GAP=6,STEP=ModuleCard.SIZE+GAP,SIDEBAR=96;
-    private static final String[] CATEGORIES={"Keystrokes","Stats","Vanilla HUD","Custom Slots","Client Tweaks"};
+    private static final String[] CATEGORIES={"Game HUD","Inventory","Keystrokes","Stats","Camera","Visuals"};
     private int category,scroll,sidebarX,left,gridWidth,gridTop,gridBottom,totalHeight,columns;
     private String query="";
     private EditBox search;
@@ -82,10 +82,18 @@ public final class HudSettingsScreen extends StudioScreen {
     }
     private List<HudConfig.Element> entries() {
         List<HudConfig.Element> result=new ArrayList<>();
-        if(category==3 && matches("Add slot inventory armour")) result.add(null);
-        List<HudConfig.Element> source=category==4?new ArrayList<>(HudStudioClient.config.tweaks.values()):category==3?HudStudioClient.config.slots:
-            Arrays.stream(category==0?HudConfig.INPUTS:category==1?HudConfig.STATS:HudConfig.VANILLA)
-                .map(HudStudioClient.config.elements::get).toList();
+        if(category==1 && matches("Add slot inventory armour")) result.add(null);
+        String[] ids=switch(category) {
+            case 0->new String[]{"scoreboard","bossbar","effects","player_tab","combo"};
+            case 1->new String[]{"offhand"};
+            case 2->new String[]{"wasd","mouse","left_cps","right_cps","space","sneak","sprint"};
+            case 3->new String[]{"fps","speed","clock","memory"};
+            case 4->new String[]{"zoom","freelook","freecam"};
+            default->new String[]{"no_shake","no_explosions"};
+        };
+        List<HudConfig.Element> source=new ArrayList<>();
+        for(String id:ids)source.add((category>=4?HudStudioClient.config.tweaks:HudStudioClient.config.elements).get(id));
+        if(category==1)source.addAll(HudStudioClient.config.slots);
         for(var e:source) if(matches(HudLayout.name(e)+" "+e.id+" "+String.join(" ",description(e)))) result.add(e);
         return result;
     }
@@ -102,7 +110,7 @@ public final class HudSettingsScreen extends StudioScreen {
         for(int i=0;i<count;i++) {
             var e=all.get(i);int x=left+(i%columns)*STEP,y=gridTop+(i/columns)*STEP-scroll;
             if(y+ModuleCard.SIZE<=gridTop || y>=gridBottom) continue;
-            Runnable open=e==null?()->minecraft.gui.setScreen(new SlotPickerScreen(this,null)):category==4?
+            Runnable open=e==null?()->minecraft.gui.setScreen(new SlotPickerScreen(this,null)):category>=4?
                 ()->minecraft.gui.setScreen(new TweakSettingsScreen(this,e)):()->minecraft.gui.setScreen(new HudEditorScreen(this,e));
             addCard(new ModuleCard(x,y,e,e==null?new String[]{"Inventory or","armour"}:description(e),open,
                 (mx,my)->{context=e;menuX=Math.clamp(mx,left,Math.max(left,left+gridWidth-114));menuY=my;refreshCards();},

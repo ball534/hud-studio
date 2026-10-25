@@ -1,10 +1,10 @@
-# ball's hud studio 1.6 - Fabric 26.3
+# ball's hud studio 1.7 - Fabric 26.3
 
 A fully client-side HUD mod with compact square modules, a category sidebar, live search and global appearance controls.
 
 ## Installation and defaults
 
-Replace the previous JAR with `hud-studio-1.6.0.jar` in your client's `mods` folder. Requires Fabric API for Minecraft 26.3, Mod Menu 21.0.0+, Fabric Loader 0.19.5+ and Java 25. Servers do not need ball's hud studio.
+Replace the previous JAR with `hud-studio-1.7.0.jar` in your client's `mods` folder. Requires Fabric API for Minecraft 26.3, Mod Menu 21.0.0+, Fabric Loader 0.19.5+ and Java 25. Servers do not need ball's hud studio.
 
 **Fresh installations keep the vanilla HUD.** All keystrokes, stats and client tweaks start disabled, there are no custom slots, and Minecraft renders the original offhand display until it is customized. Existing saved module settings and inventory assignments are preserved when upgrading.
 
@@ -12,13 +12,16 @@ Open **Mods > ball's hud studio > Configure**.
 
 ## Module menu
 
+The module menu and its settings pause single-player, like the Escape menu. Multiplayer keeps running, following vanilla pause behavior.
+
 Choose a category from the left sidebar:
 
-- **Keystrokes:** WASD, LMB / RMB, SPACE, SNEAK, SPRINT, left CPS and right CPS.
-- **Stats:** FPS, speed, clock, memory and Combo Meter.
-- **Vanilla HUD:** scoreboard, boss bars, player tab, status effects and offhand.
-- **Custom Slots:** your inventory displays and the Add slot card.
-- **Client Tweaks:** zoom, camera shake suppression, freecam, explosion particle suppression and freelook.
+- **Game HUD:** scoreboard, boss bars, status effects, player list and Combo Meter.
+- **Inventory:** Add slot, offhand and custom inventory displays.
+- **Keystrokes:** WASD, mouse buttons, left/right CPS, jump, sneak and sprint.
+- **Stats:** FPS, movement speed, clock and memory.
+- **Camera:** zoom, freelook and freecam.
+- **Visuals:** camera shake and explosion particle suppression.
 
 The search bar filters names and descriptions within the selected category, without losing focus while typing. Each module card has an icon, centered title, description and integrated ON/OFF switch.
 
@@ -48,11 +51,11 @@ The original offhand display remains native while its module uses its defaults, 
 
 ## Inventory displays
 
-In Custom Slots, click **Add slot**. The picker mirrors the vanilla inventory, including armour, offhand, the 27 main inventory slots and all nine hotbar slots. Select a slot and choose **Add display** to open its arranger.
+In Inventory, click **Add slot**. The picker mirrors the vanilla inventory, including armour, offhand, the 27 main inventory slots and all nine hotbar slots. Select a slot and choose **Add display** to open its arranger.
 
-Standalone displays use a complete unselected vanilla hotbar frame, measuring 22 × 22 pixels, with standard item counts and durability overlays. Each display has its own **Slot opacity** slider in the inventory picker, independent of the global theme and opacity. Confirm the picker to save its assignment and opacity. They follow the item occupying the assigned slot without moving inventory items.
+Standalone displays use a complete unselected vanilla hotbar frame, measuring 22 Ã— 22 pixels, with standard item counts and durability overlays. Each display has its own **Slot opacity** slider in the inventory picker, independent of the global theme and opacity. Confirm the picker to save its assignment and opacity. They follow the item occupying the assigned slot without moving inventory items.
 
-Drag equal-scale custom slots beside or above one another to snap them into a horizontal or vertical mini hotbar. Adjacent displays share their dividers and retain black borders at the two ends. A row of N slots measures (20 × N + 2) × 22 pixels at 100% scale; a column measures 22 × (20 × N + 2). Create another slot and snap it beside either end to extend the row. Moving, hiding or removing a neighbour restores the exposed end border. Hold Shift while positioning to bypass joining, as with other snapping.
+Drag equal-scale custom slots beside or above one another to snap them into a horizontal or vertical mini hotbar. Adjacent displays share their dividers and retain black borders at the two ends. A row of N slots measures (20 Ã— N + 2) Ã— 22 pixels at 100% scale; a column measures 22 Ã— (20 Ã— N + 2). Create another slot and snap it beside either end to extend the row. Moving, hiding or removing a neighbour restores the exposed end border. Hold Shift while positioning to bypass joining, as with other snapping.
 
 Right-click a custom slot card or use its three-dot menu to reassign it, hide it when empty or remove it. The offhand card also offers hide-empty settings. The title-screen picker uses an empty inventory preview; join a world to see your items.
 
@@ -60,25 +63,25 @@ Right-click a custom slot card or use its three-dot menu to reassign it, hide it
 
 WASD follows movement bindings. SPACE, SNEAK and SPRINT follow their corresponding actions, and LMB / RMB reflects actual mouse buttons.
 
-Standard stats and single-row keystroke bars are 64 × 20 pixels at default scale. Combo Meter uses a 140 × 60 canvas for its rank, score, hit feedback and timer. WASD uses 20 × 20 keys with 2-pixel gaps, making a 64 × 42 cluster. Default placement uses consistent 2-pixel gaps between rows. The two CPS modules both display only the click count and **CPS**; their menu titles distinguish left and right. Speed is horizontal movement, the clock uses local time, and memory is Java heap usage.
+Standard stats and single-row keystroke bars are 64 Ã— 20 pixels at default scale. Combo Meter uses a 140 Ã— 60 canvas for its rank, score, hit feedback and timer. WASD uses 20 Ã— 20 keys with 2-pixel gaps, making a 64 Ã— 42 cluster. Default placement uses consistent 2-pixel gaps between rows. The two CPS modules both display only the click count and **CPS**; their menu titles distinguish left and right. Speed is horizontal movement, the clock uses local time, and memory is Java heap usage.
 
-## Client Tweaks
+## Camera and Visuals
 
-These are client behaviour settings, so clicking their cards opens settings rather than the HUD arranger. All start disabled. Enable them in Client Tweaks before using their keys. Bind keys in each tweak screen or in Minecraft Controls; bindings are saved in Minecraft options.
+These are client behaviour settings, so clicking their cards opens settings rather than the HUD arranger. All start disabled. Enable them in Camera or Visuals before using their keys. Bind keys in each tweak screen or in Minecraft Controls; bindings are saved in Minecraft options.
 
 | Tweak | Default control | Behaviour |
 |---|---|---|
-| Zoom | Hold C | 4x by default, adjustable from 2x to 12x; sensitivity follows zoom. |
+| Zoom | Hold Z | Starts at 3x; scroll while held to zoom between 1x and 50x. Release resets magnification. Starting zoom is configurable; sensitivity follows WI Zoom's curve. |
 | No camera shake | Toggle in Studio | Removes walking bob and hit tilt without changing vanilla settings. |
-| Freecam | Press F6 | Toggles a detached camera; WASD moves, jump/sneak ascends/descends, sprint boosts speed. Speed is adjustable. |
+| Freecam | Press F6 | Toggles a detached camera; WASD flies horizontally, jump/sneak ascends/descends. Sprint while moving forward gives a 1.5x horizontal boost until forward movement stops. Speed is adjustable. |
 | No explosions | Toggle in Studio | Hides explosion bursts, emitters and explosion block debris while retaining sounds and gameplay. |
 | Freelook | Hold Left Alt | Orbits in third person while the character keeps its aim and movement direction; releasing restores the previous view. |
 
-Freecam explores already loaded chunks. It redirects movement to the camera and blocks attacking, block breaking and item use; it never teleports the player or changes their flight abilities. Leaving the world, dying or disabling the tweak restores the previous camera mode. Freelook and freecam do not change the character's yaw or pitch.
+Freecam explores already loaded chunks with a separate camera entity and correct screen-relative strafing. Its Controls tab offers hold/toggle activation and exit on damage. Movement offers horizontal or crosshair-directed flight, independent horizontal/vertical speeds, sprint multiplier and block collision. Display offers player visibility, HUD visibility and submersion fog. By default your player body is visible, the held hand is hidden, and the camera passes through blocks. It redirects movement to the camera and blocks attacking, block breaking and item use; it never teleports the player or changes their flight abilities. Taking damage, leaving the world, dying or disabling the tweak restores the previous camera entity and mode. Normal player physics continue while detached. Freelook and freecam do not change the character's yaw or pitch. Zoom settings include starting magnification, Show HUD and Cinematic zoom (smooth mouse movement while held). These options do not change your F1 HUD setting or saved cinematic camera setting. Existing saved speed, starting zoom and key bindings are retained; Z is the default for fresh key bindings.
 
 ## Combo Meter
 
-Enable **Stats > Combo Meter** and arrange it like other HUD pieces. Its default position has 18 pixels of right padding and 28 pixels of top padding. Saved custom placements are retained; use Reset in the arranger to apply the new default.
+Enable **Game HUD > Combo Meter** and arrange it like other HUD pieces. Its default position has 18 pixels of right padding and 28 pixels of top padding. Saved custom placements are retained; use Reset in the arranger to apply the new default.
 
 The first confirmed damaging hit primes the streak; the meter appears at Good on the second hit, including both hits and their damage in its totals. Each subsequent hit advances one tier through Great, Brutal, Savage, Stylish, Sensational, Unstoppable and Legendary. Further hits continue adding damage and hits at Legendary. Misses do not advance the meter. Taking damage or inactivity ends the combo, showing total damage and hit count for four seconds.
 
@@ -90,7 +93,7 @@ Each new tier plays its bundled combo clip, and every further confirmed hit at L
 
 Settings are saved in `config/hud-studio.json`. Existing permitted placements and inventory assignments are preserved. Older combined input/stat panels are migrated to independent modules.
 
-The codebase is in `C:\Users\lewis\Downloads\hud-studio`. Run `gradlew.bat runClient` there for the development client, or `gradlew.bat build` to produce `build/libs/hud-studio-1.6.0.jar`.
+The codebase is in `C:\Users\lewis\Downloads\hud-studio`. Run `gradlew.bat runClient` there for the development client, or `gradlew.bat build` to produce `build/libs/hud-studio-1.7.0.jar`.
 
 Reusable client integration tests live in `tests/client`. Run `gradlew.bat runClient --no-configuration-cache -I client-test.gradle`; they use an isolated runtime in `build/client-test`, preserving your normal development world and settings. A successful assertion run writes `build/client-test/hud-result.txt`. See VALIDATION.md for the known native-driver shutdown issue.
 

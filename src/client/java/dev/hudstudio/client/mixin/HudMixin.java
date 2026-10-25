@@ -12,6 +12,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 @Mixin(Hud.class)
 public class HudMixin {
+    @org.spongepowered.asm.mixin.injection.Inject(method="extractRenderState",at=@At("HEAD"),cancellable=true)
+    private void studio_hideHud(GuiGraphicsExtractor g,DeltaTracker d,org.spongepowered.asm.mixin.injection.callback.CallbackInfo ci) {
+        if(ClientTweaks.hideHud())ci.cancel();
+    }
     @WrapMethod(method="extractScoreboardSidebar")
     private void studio_scoreboard(GuiGraphicsExtractor g,DeltaTracker d,Operation<Void> original) {
         var e=HudStudioClient.config.elements.get("scoreboard");
