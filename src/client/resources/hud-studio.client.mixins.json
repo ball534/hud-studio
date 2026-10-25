@@ -1,0 +1,23 @@
+{
+	"required": true,
+	"package": "dev.hudstudio.client.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"HudMixin",
+        "MouseMixin",
+        "CameraMixin",
+        "ShakeMixin",
+        "FreecamInputMixin",
+        "FreecamInteractionMixin",
+        "ParticleMixin",
+        "ExplosionDebrisMixin",
+        "AttackMixin",
+        "DamageMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

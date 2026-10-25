@@ -1,0 +1,10 @@
+// Isolated integration client: gradlew.bat runClient -I client-test.gradle
+allprojects {
+    afterEvaluate {
+        loom.runs.client.runDir('build/client-test')
+        sourceSets.client.java.srcDir('tests/client/java')
+        tasks.named('runClient') {
+            jvmArgs '-Dfabric.client.gametest', '-Dfabric.client.gametest.modid=hud-studio-test', "-Dfabric.addMods=${project.file('tests/client/mod').absolutePath}"
+        }
+    }
+}

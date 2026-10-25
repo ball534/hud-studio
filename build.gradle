@@ -1,0 +1,55 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+}
+
+repositories {
+    // Bypass corrupted cached metadata for this standalone Fabric runtime helper.
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'FabricRuntimeHelper'
+                url = 'https://maven.fabricmc.net/'
+                metadataSources { artifact() }
+            }
+        }
+        filter { includeModule('net.fabricmc', 'fabric-log4j-util') }
+    }
+    maven { url = 'https://maven.terraformersmc.com/releases/' }
+}
+
+loom {
+    splitEnvironmentSourceSets()
+    mods {
+        'hud-studio' {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    implementation 'com.terraformersmc:modmenu:21.0.0'
+}
+
+def modVersion = project.version.toString()
+def licenseFileName = "LICENSE_${project.name}".toString()
+
+processResources {
+    inputs.property 'version', modVersion
+    filesMatching('fabric.mod.json') { expand 'version': modVersion }
+}
+
+tasks.withType(JavaCompile).configureEach { options.release = 25 }
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+jar {
+    from('LICENSE') { rename { licenseFileName } }
+}

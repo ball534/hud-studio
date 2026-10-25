@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "hud-studio",
+	"version": "${version}",
+	"name": "ball's hud studio",
+	"authors": ["ball534"],
+    "description": "Client-side HUD editor, modular inventory hotbars, camera tweaks and a style combo meter.",
+	"license": "CC0-1.0",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"dev.hudstudio.client.HudStudioClient"
+		],
+		"modmenu": [
+			"dev.hudstudio.client.ModMenuIntegration"
+		]
+	},
+	"mixins": [
+		{
+			"config": "hud-studio.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"minecraft": "~26.3",
+		"java": ">=25",
+		"fabric-api": "*",
+		"modmenu": ">=21.0.0"
+	}
+}
