@@ -73,6 +73,7 @@ public final class HudSettingsScreen extends StudioScreen {
             case "freecam" -> new String[]{"Detached camera","Explore nearby"};
             case "no_explosions" -> new String[]{"Hide explosion","particles"};
             case "freelook" -> new String[]{"Hold to orbit","Keep your aim"};
+            case "full_bright" -> new String[]{"Maximum gamma","See in the dark"};
             default -> new String[]{"HUD","display"};
         };
     }
@@ -89,7 +90,7 @@ public final class HudSettingsScreen extends StudioScreen {
             case 2->new String[]{"wasd","mouse","left_cps","right_cps","space","sneak","sprint"};
             case 3->new String[]{"fps","speed","clock","memory"};
             case 4->new String[]{"zoom","freelook","freecam"};
-            default->new String[]{"no_shake","no_explosions"};
+            default->new String[]{"no_shake","no_explosions","full_bright"};
         };
         List<HudConfig.Element> source=new ArrayList<>();
         for(String id:ids)source.add((category>=4?HudStudioClient.config.tweaks:HudStudioClient.config.elements).get(id));
@@ -117,6 +118,14 @@ public final class HudSettingsScreen extends StudioScreen {
                 left,gridTop,left+gridWidth,gridBottom));
         }
         if(context!=null) {
+            if(context.id.equals("effects")) {
+                menuHeight=20;menuY=Math.clamp(menuY,gridTop,Math.max(gridTop,gridBottom-menuHeight));
+                addCard(new StudioUi.Action(menuX,menuY,114,20,"Time remaining: "+(HudStudioClient.config.effectsShowTime?"ON":"OFF"),()->{
+                    HudStudioClient.config.effectsShowTime=!HudStudioClient.config.effectsShowTime;
+                    context=null;HudStudioClient.config.save();refreshCards();
+                }));
+                return;
+            }
             boolean slot=context.id.startsWith("slot_");menuHeight=slot?60:20;
             menuY=Math.clamp(menuY,gridTop,Math.max(gridTop,gridBottom-menuHeight));int y=menuY;
             if(slot) {addCard(new StudioUi.Action(menuX,y,114,20,"Change slot",()->{var e=context;context=null;minecraft.gui.setScreen(new SlotPickerScreen(this,e));}));y+=20;}

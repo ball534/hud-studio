@@ -25,7 +25,7 @@ public final class ModuleCard extends AbstractButton {
         setTooltip(Tooltip.create(Component.literal(e==null?"Add an inventory or armour display":HudLayout.name(e)+
             (java.util.Arrays.asList(HudConfig.TWEAKS).contains(e.id)?" · Click to configure; Space toggles":" · Click to arrange; Space toggles visibility"))));
     }
-    private boolean hasMenu() {return element!=null && (element.id.startsWith("slot_") || element.id.equals("offhand"));}
+    private boolean hasMenu() {return element!=null && (element.id.startsWith("slot_") || element.id.equals("offhand") || element.id.equals("effects"));}
     private boolean inToggle(double x,double y) {
         return element!=null && x>=getX()+14 && x<getX()+SIZE-14 && y>=getY()+53 && y<getY()+SIZE-2;
     }

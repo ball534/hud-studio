@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "minVersion": "0.7.11",
+  "package": "dev.hudstudio.mixin",
+  "refmap": "mixins.hud-studio.refmap.json",
+  "compatibilityLevel": "JAVA_8",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "FullBrightMixin",
+    "HudMixin",
+    "PlayerListMixin",
+    "FogMixin",
+    "DamageMixin",
+    "ExplosionMixin",
+    "CameraMixin",
+    "PlayerMixin",
+    "InputMixin",
+    "ParticleMixin",
+    "InteractionMixin"
+  ]
+}

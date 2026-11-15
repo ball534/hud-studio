@@ -75,6 +75,7 @@ public final class TweakSettingsScreen extends StudioScreen {
             String hint=switch(setting.id) {
                 case "freelook"->"Hold to orbit. Release to restore your view.";
                 case "no_shake"->"Removes walking bob and damage tilt.";
+                case "full_bright"->"Maximum gamma while enabled. Saved brightness is preserved.";
                 default->"Hides explosion particles; keeps sounds.";
             };
             StudioUi.centered(g,hint,width/2f,row+10,width-28,.72f,StudioUi.MUTED);

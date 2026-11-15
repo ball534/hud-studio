@@ -4,6 +4,7 @@
 	"compatibilityLevel": "JAVA_25",
 	"client": [
 		"HudMixin",
+        "FullBrightMixin",
         "MouseMixin",
         "CameraMixin",
         "ShakeMixin",

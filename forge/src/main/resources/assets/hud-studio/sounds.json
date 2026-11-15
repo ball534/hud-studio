@@ -1,0 +1,10 @@
+{
+  "combo_1": {"sounds": ["hud-studio:combo_1"]},
+  "combo_2": {"sounds": ["hud-studio:combo_2"]},
+  "combo_3": {"sounds": ["hud-studio:combo_3"]},
+  "combo_4": {"sounds": ["hud-studio:combo_4"]},
+  "combo_5": {"sounds": ["hud-studio:combo_5"]},
+  "combo_6": {"sounds": ["hud-studio:combo_6"]},
+  "combo_7": {"sounds": ["hud-studio:combo_7"]},
+  "combo_8": {"sounds": ["hud-studio:combo_8"]}
+}

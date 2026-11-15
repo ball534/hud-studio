@@ -111,9 +111,20 @@ public final class HudSmokeTest implements FabricClientGameTest {
                 && !loaded.freecamShowPlayer && !loaded.freecamShowHud && loaded.freecamShowSubmersion,"Freecam options not saved");
         });
         click(c,"Back");click(c,"Visuals");
-        c.runOnClient(mc -> check(modules(mc).equals(List.of("No camera shake","No explosions")),"Visual effects category incorrect"));
+        c.runOnClient(mc -> check(modules(mc).equals(List.of("No camera shake","No explosions","Full Bright")),"Visual effects category incorrect"));
+        click(c,"Full Bright");click(c,"Enabled: OFF");
+        c.runOnClient(mc -> check(HudConfig.load().tweaks.get("full_bright").visible,"Full Bright toggle not persisted"));
+        click(c,"Enabled: ON");click(c,"Back");
         click(c,"Game HUD");
         c.runOnClient(mc -> check(modules(mc).equals(List.of("Scoreboard","Boss bars","Status effects","Player tab","Combo Meter")),"Vanilla HUD category incorrect"));
+        c.runOnClient(mc -> {
+            var screen=mc.gui.screen();
+            for(var child:screen.children())if(child instanceof ModuleCard card && card.getMessage().getString().equals("Status effects")) {
+                screen.mouseClicked(mouse(card.getX()+10,card.getY()+10,org.lwjgl.sdl.SDLMouse.SDL_BUTTON_RIGHT),false);break;
+            }
+        });
+        click(c,"Time remaining: OFF");
+        c.runOnClient(mc -> check(HudConfig.load().effectsShowTime,"Effect timer option not persisted"));
         click(c,"Keystrokes");click(c,"WASD");c.waitForScreen(HudEditorScreen.class);
         c.runOnClient(mc -> {
             var screen=mc.gui.screen();var config=HudStudioClient.config;
@@ -303,6 +314,42 @@ public final class HudSmokeTest implements FabricClientGameTest {
         }
     }
     private static void testNewFeatures(ClientGameTestContext c,net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext serverContext) {
+        c.runOnClient(mc -> {
+            var config=HudConfig.defaults();HudStudioClient.config=config;
+            check(!config.effectsShowTime && !ClientTweaks.enabled("full_bright"),"1.8 features enabled by default");
+            check(EffectTimers.format(-1).equals("\u221e") && EffectTimers.format(0).equals("0:00")
+                && EffectTimers.format(1).equals("0:01") && EffectTimers.format(1200).equals("1:00")
+                && EffectTimers.format(72000).equals("60:00"),"Effect duration formatting incorrect");
+            var extractor=new net.minecraft.client.renderer.LightmapRenderStateExtractor(mc.gameRenderer,mc);
+            var state=new net.minecraft.client.renderer.state.LightmapRenderState();
+            double gamma=mc.options.gamma().get();
+            extractor.tick();extractor.extract(state,0);
+            float normal=state.brightness;
+            config.tweaks.get("full_bright").visible=true;
+            extractor.tick();extractor.extract(state,0);
+            check(state.brightness>90,"Full Bright did not override actual lightmap gamma");
+            check(mc.options.gamma().get()==gamma,"Full Bright changed saved brightness");
+            config.tweaks.get("full_bright").visible=false;
+            extractor.tick();extractor.extract(state,0);
+            check(Math.abs(state.brightness-normal)<.001,"Full Bright did not restore lighting");
+        });
+        serverContext.runCommand("effect give @p minecraft:speed 150 0 false");
+        serverContext.runCommand("effect give @p minecraft:weakness 45 0 false");
+        serverContext.runCommand("effect give @p minecraft:night_vision infinite 0 false");
+        c.waitTicks(4);
+        c.runOnClient(mc -> {
+            check(mc.player.getActiveEffects().stream().filter(e->e.showIcon()).count()==3,"Missing visible timer test effects");
+            HudStudioClient.config.effectsShowTime=true;mc.gui.setScreen(null);
+        });
+        c.waitTicks(3);
+        c.takeScreenshot("effects-time-remaining");
+        c.runOnClient(mc -> {
+            var effects=HudStudioClient.config.elements.get("effects");effects.scale=2;
+            HudLayout.move(effects,130,55,mc.getWindow().getGuiScaledWidth(),mc.getWindow().getGuiScaledHeight());
+        });
+        c.waitTicks(3);
+        c.takeScreenshot("effects-time-remaining-scaled");
+        serverContext.runCommand("effect clear @p");
         c.runOnClient(mc -> {
             var config=HudConfig.defaults();HudStudioClient.config=config;
             for(int i=0;i<4;i++) {

@@ -1,0 +1,7 @@
+// Run from forge/: gradlew.bat runClient --offline -I client-test.gradle
+allprojects {
+    afterEvaluate {
+        sourceSets.main.java.srcDir('tests/client/java')
+        loom.runs.client.runDir('build/client-test')
+    }
+}

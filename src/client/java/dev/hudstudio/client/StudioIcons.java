@@ -30,6 +30,7 @@ public final class StudioIcons {
             case "combo" -> {r(g,2,10,3,5,C);r(g,6,6,3,9,C);r(g,10,1,4,14,C);r(g,0,1,5,2,D);}
             case "zoom" -> {g.outline(1,1,10,10,C);r(g,10,10,3,3,C);r(g,13,13,3,3,C);r(g,5,3,1,6,D);r(g,3,5,6,1,D);}
             case "no_shake" -> {r(g,7,1,2,14,C);r(g,0,7,16,2,C);g.outline(4,4,8,8,D);}
+            case "full_bright" -> {g.outline(4,4,8,8,C);r(g,6,6,4,4,C);r(g,7,0,2,3,C);r(g,7,13,2,3,C);r(g,0,7,3,2,C);r(g,13,7,3,2,C);}
             case "freecam","freelook" -> {g.outline(1,3,14,10,C);r(g,6,6,4,4,D);r(g,3,1,5,2,C);}
             case "no_explosions" -> {r(g,6,3,4,10,D);r(g,3,6,10,4,D);for(int i=0;i<15;i++)r(g,i,14-i,2,1,C);}
             default -> {for(int row=0;row<3;row++)for(int col=0;col<3;col++)g.outline(col*5,row*5,4,4,C);}

@@ -1,0 +1,13 @@
+[
+  {
+    "modid": "hud-studio",
+    "name": "ball's hud studio",
+    "description": "Client-side HUD editor for Forge 1.8.9. Open with Right Shift; rebind in Controls.",
+    "version": "${version}",
+    "mcversion": "1.8.9",
+    "authorList": [
+      "ball"
+    ],
+    "clientSideOnly": true
+  }
+]

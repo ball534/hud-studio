@@ -1,4 +1,14 @@
-# ball's hud studio 1.7 validation
+# ball's hud studio 1.8 validation
+
+Version 1.8 (2026-11-15): added Full Bright under Visuals and the Effects context-menu Time remaining option for Fabric 26.3 and Forge 1.8.9. Both options default OFF. Existing configuration loading adds the missing tweak without replacing saved placements, slots or other settings. Full Bright supplies gamma 100 to each version's lightmap calculation and does not modify the brightness option or add a potion effect. The approach was checked against the actual cached Minecraft bytecode and lightmap shader, with [Gamma Utils' project documentation](https://github.com/Sjouwer/gamma-utils) consulted for gamma behavior.
+
+Fabric production build passed. The extended real-client suite wrote PASS on 2026-11-15 at 16:32:07: verified the real lightmap extractor receives gamma above 90 when enabled, returns to its original brightness when disabled, and leaves the saved brightness option unchanged. Verified Full Bright and Time remaining through their UI controls and configuration reloads; checked finite/infinite duration formatting. Inspected screenshots with beneficial and harmful effects on separate rows, an infinite effect, and a moved/scaled effects module. Existing HUD, inventory, camera and combo regression assertions passed. The client then encountered the previously documented native 0xC0000005 shutdown crash, so clean Fabric client shutdown remains unverified.
+
+Forge source was recovered from the supplied 1.7 JAR using Vineflower and the cached MCP stable 22 mappings. The standalone Forge project now lives in `forge/`, uses Gradle 8.8/Essential Loom 1.6.21 and targets Java 8. The production build passed and the generated refmap includes the gammaSetting redirect. Real Forge 1.8.9 client checks passed for lightmap saturation at the darkest entry, exact restoration of the original lightmap array, unchanged saved gamma, Visuals UI controls, and persistence of both new settings. The isolated test also applies synchronized server effects, captures timers ON/OFF and scaled, and exits normally. Tests are under `forge/tests/client`, activated only with `forge/client-test.gradle`.
+
+Production JAR checks exclude both test classes and test mod metadata. Multiplayer, third-party shader packs and other mods replacing the lightmap/HUD were not tested.
+
+## Previous validation
 
 Version 1.7 (2026-10-25): corrected reversed freecam strafing. Minecraft's level extractor explicitly skips LocalPlayer when a different entity owns the camera; the freecam rendering hook now bypasses that specific guard when Show player is enabled. Camera entity previous transforms are updated each tick, and detached-camera culling supports passing through blocks. The production build passed and releases/hud-studio-1.7.0.jar contains version 1.7.0 metadata and no test classes. The client again encountered the known native 0xC0000005 shutdown crash after completing its assertions.
 

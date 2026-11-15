@@ -116,7 +116,10 @@ public final class HudWidgets {
                 for(int i=0;i<12;i++) StudioUi.text(g,"Player "+(i+1),8+(i/6)*140,24+(i%6)*15,0xffdddddd);
             }
             case "effects" -> {
-                for(int i=0;i<3;i++) {StudioUi.card(g,i*30,0,26,26,0xcc161616);g.item(new ItemStack(Items.POTION),i*30+5,5);}
+                for(int i=0;i<3;i++) {
+                    StudioUi.card(g,i*30,0,26,26,0xcc161616);g.item(new ItemStack(Items.POTION),i*30+5,5);
+                    if(HudStudioClient.config.effectsShowTime)EffectTimers.label(g,i*30+13,18,i==2?"\u221e":i==0?"2:30":"0:45");
+                }
             }
             default -> {
                 if(e.id.equals("offhand") || e.id.startsWith("slot_")) {

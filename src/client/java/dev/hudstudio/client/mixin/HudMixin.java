@@ -42,7 +42,7 @@ public class HudMixin {
         var e=HudStudioClient.config.elements.get("effects");
         if(!e.visible || Minecraft.getInstance().gui.screen() instanceof HudEditorScreen) return;
         HudLayout.begin(g,e,true);
-        try {original.call(g,d);} finally {HudLayout.end(g);}
+        try {original.call(g,d);EffectTimers.draw(g);} finally {HudLayout.end(g);}
     }
     @ModifyExpressionValue(method="extractItemHotbar",at=@At(value="INVOKE",target="Lnet/minecraft/world/entity/player/Player;getOffhandItem()Lnet/minecraft/world/item/ItemStack;"))
     private ItemStack studio_offhand(ItemStack original) {

@@ -1,14 +1,19 @@
-# ball's hud studio 1.7 - Fabric 26.3
+# ball's hud studio 1.8 - Fabric 26.3 and Forge 1.8.9
 
 A fully client-side HUD mod with compact square modules, a category sidebar, live search and global appearance controls.
 
 ## Installation and defaults
 
-Replace the previous JAR with `hud-studio-1.7.0.jar` in your client's `mods` folder. Requires Fabric API for Minecraft 26.3, Mod Menu 21.0.0+, Fabric Loader 0.19.5+ and Java 25. Servers do not need ball's hud studio.
+Replace the previous JAR with the appropriate 1.8 release in your client's `mods` folder:
+
+- **Fabric 26.3:** `hud-studio-1.8.0.jar`. Requires Fabric API for Minecraft 26.3, Mod Menu 21.0.0+, Fabric Loader 0.19.5+ and Java 25. Open **Mods > ball's hud studio > Configure**.
+- **Forge 1.8.9:** `hud-studio-1.8.0-forge1.8.9.jar`. Requires Forge 11.15.1.2318 and Java 8. Open with **Right Shift**, rebindable in Controls. Minecraft 1.8.9 has no offhand, so that module is exclusive to Fabric.
+
+Servers do not need ball's hud studio. Install only the JAR matching your loader and Minecraft version.
 
 **Fresh installations keep the vanilla HUD.** All keystrokes, stats and client tweaks start disabled, there are no custom slots, and Minecraft renders the original offhand display until it is customized. Existing saved module settings and inventory assignments are preserved when upgrading.
 
-Open **Mods > ball's hud studio > Configure**.
+On Forge, enable the Effects module to add status icons to the HUD; vanilla 1.8.9 has no HUD status icons.
 
 ## Module menu
 
@@ -21,7 +26,7 @@ Choose a category from the left sidebar:
 - **Keystrokes:** WASD, mouse buttons, left/right CPS, jump, sneak and sprint.
 - **Stats:** FPS, movement speed, clock and memory.
 - **Camera:** zoom, freelook and freecam.
-- **Visuals:** camera shake and explosion particle suppression.
+- **Visuals:** Full Bright, camera shake and explosion particle suppression.
 
 The search bar filters names and descriptions within the selected category, without losing focus while typing. Each module card has an icon, centered title, description and integrated ON/OFF switch.
 
@@ -40,6 +45,10 @@ Only the module used to open the arranger can be moved, resized or reset. Other 
 The arranger has only Back and Reset buttons, with no top or bottom bars. A disabled module can be arranged through its card without enabling it.
 
 Inactive native modules use approximate outlines and representative preview content. Their normal activation rules still apply: a scoreboard needs an objective, the player list needs its key held, and effects need active status effects.
+
+## Effect timers
+
+In **Game HUD**, right-click the **Effects** card or click its three-dot menu, then enable **Time remaining**. Each effect icon displays its remaining duration; infinite effects show **∞**. The timer moves and scales with its icon and also appears in the arranger preview. Disable the option to show icons alone. Timers start disabled and the setting is saved across restarts.
 
 ## Global appearance
 
@@ -73,6 +82,7 @@ These are client behaviour settings, so clicking their cards opens settings rath
 |---|---|---|
 | Zoom | Hold Z | Starts at 3x; scroll while held to zoom between 1x and 50x. Release resets magnification. Starting zoom is configurable; sensitivity follows WI Zoom's curve. |
 | No camera shake | Toggle in Studio | Removes walking bob and hit tilt without changing vanilla settings. |
+| Full Bright | Toggle in Studio | Uses maximum lightmap gamma to brighten dark areas. Disabling it restores normal lighting; your saved brightness setting stays intact. |
 | Freecam | Press F6 | Toggles a detached camera; WASD flies horizontally, jump/sneak ascends/descends. Sprint while moving forward gives a 1.5x horizontal boost until forward movement stops. Speed is adjustable. |
 | No explosions | Toggle in Studio | Hides explosion bursts, emitters and explosion block debris while retaining sounds and gameplay. |
 | Freelook | Hold Left Alt | Orbits in third person while the character keeps its aim and movement direction; releasing restores the previous view. |
@@ -91,9 +101,9 @@ Each new tier plays its bundled combo clip, and every further confirmed hit at L
 
 ## Settings and development
 
-Settings are saved in `config/hud-studio.json`. Existing permitted placements and inventory assignments are preserved. Older combined input/stat panels are migrated to independent modules.
+Settings are saved in `config/hud-studio.json` on Fabric and `config/hud-studio-forge.json` on Forge. Existing permitted placements and inventory assignments are preserved. Older combined input/stat panels are migrated to independent modules.
 
-The codebase is in `C:\Users\lewis\Downloads\hud-studio`. Run `gradlew.bat runClient` there for the development client, or `gradlew.bat build` to produce `build/libs/hud-studio-1.7.0.jar`.
+The repository root contains the Fabric source. Run `gradlew.bat runClient` for the development client, or `gradlew.bat build` to produce `build/libs/hud-studio-1.8.0.jar`. The independent Forge project is in [`forge`](forge/README.md); run its wrapper from that directory to produce `forge/build/libs/hud-studio-1.8.0-forge1.8.9.jar`.
 
 Reusable client integration tests live in `tests/client`. Run `gradlew.bat runClient --no-configuration-cache -I client-test.gradle`; they use an isolated runtime in `build/client-test`, preserving your normal development world and settings. A successful assertion run writes `build/client-test/hud-result.txt`. See VALIDATION.md for the known native-driver shutdown issue.
 

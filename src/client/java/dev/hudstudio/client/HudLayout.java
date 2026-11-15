@@ -155,6 +155,7 @@ public final class HudLayout {
             case "freecam" -> "Freecam";
             case "no_explosions" -> "No explosions";
             case "freelook" -> "Freelook";
+            case "full_bright" -> "Full Bright";
             default -> e.id;
         };
     }

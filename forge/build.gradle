@@ -1,0 +1,72 @@
+plugins {
+    id 'java'
+    id 'gg.essential.loom' version '1.6.21'
+    id 'dev.architectury.architectury-pack200' version '0.1.3'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://repo.spongepowered.org/maven/' }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(8)
+    withSourcesJar()
+}
+
+loom {
+    forge {
+        pack200Provider = new dev.architectury.pack200.java.Pack200Adapter()
+        mixinConfig 'mixins.hud-studio.json'
+    }
+    mixin { defaultRefmapName = 'mixins.hud-studio.refmap.json' }
+    runs {
+        client { programArgs '--tweakClass', 'org.spongepowered.asm.launch.MixinTweaker' }
+    }
+}
+
+configurations { shadowImpl }
+configurations.implementation.extendsFrom(configurations.shadowImpl)
+
+dependencies {
+    minecraft 'com.mojang:minecraft:1.8.9'
+    mappings 'de.oceanlabs.mcp:mcp_stable:22-1.8.9'
+    forge 'net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9'
+    shadowImpl('org.spongepowered:mixin:0.7.11-SNAPSHOT') { transitive = false }
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+tasks.named('runClient', JavaExec) {
+    javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(8) }
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('mcmod.info') { expand version: inputs.properties.version }
+}
+
+tasks.withType(Jar).configureEach {
+    manifest.attributes(
+        'FMLCorePluginContainsFMLMod': 'true',
+        'ForceLoadAsMod': 'true',
+        'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
+        'MixinConfigs': 'mixins.hud-studio.json'
+    )
+}
+jar {
+    archiveClassifier = 'without-deps'
+    destinationDirectory = layout.buildDirectory.dir('intermediates')
+}
+shadowJar {
+    configurations = [project.configurations.shadowImpl]
+    archiveClassifier = 'dev'
+    destinationDirectory = layout.buildDirectory.dir('intermediates')
+}
+remapJar {
+    dependsOn shadowJar
+    inputFile = shadowJar.archiveFile
+    archiveClassifier = ''
+}
+assemble.dependsOn remapJar
