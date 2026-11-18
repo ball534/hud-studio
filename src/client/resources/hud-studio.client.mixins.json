@@ -5,6 +5,8 @@
 	"client": [
 		"HudMixin",
         "FullBrightMixin",
+        "WaypointRenderMixin",
+        "WorldDeletionMixin",
         "MouseMixin",
         "CameraMixin",
         "ShakeMixin",
@@ -12,6 +14,7 @@
         "FreecamPlayerMixin",
         "FreecamRenderMixin",
         "FreecamInteractionMixin",
+        "FreecamGameModeMixin",
         "ParticleMixin",
         "ExplosionDebrisMixin",
         "AttackMixin",

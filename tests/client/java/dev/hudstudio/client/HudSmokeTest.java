@@ -52,6 +52,7 @@ public final class HudSmokeTest implements FabricClientGameTest {
         throw new AssertionError("Missing control: "+label);
     }
     public void runTest(ClientGameTestContext c) {
+        if(Boolean.getBoolean("hudstudio.visualRevision")){RevisionSmokeTest.run(c);return;}
         c.runOnClient(mc -> {
             HudStudioClient.config=HudConfig.defaults();
             for(String[] ids:new String[][]{HudConfig.INPUTS,HudConfig.STATS})for(String id:ids)
@@ -87,13 +88,13 @@ public final class HudSmokeTest implements FabricClientGameTest {
         c.runOnClient(mc -> check(modules(mc).equals(List.of("Zoom","Freelook","Freecam")),"Client tweaks missing"));
         c.takeScreenshot("client-tweaks");click(c,"Zoom");
         c.waitForScreen(TweakSettingsScreen.class);c.takeScreenshot("zoom-settings");
-        click(c,"Show HUD: ON");click(c,"Cinematic zoom: OFF");
+        click(c,"Show HUD: ON");click(c,"Cinematic Zoom: OFF");
         c.runOnClient(mc -> {
             var loaded=HudConfig.load();
             check(!loaded.zoomShowHud && loaded.zoomCinematic,"Zoom options not saved");
             check(ClientTweaks.zoomKey.getDefaultKey().getValue()==com.mojang.blaze3d.platform.InputConstants.KEY_Z,"Default zoom key is not Z");
         });
-        click(c,"Show HUD: OFF");click(c,"Cinematic zoom: ON");
+        click(c,"Show HUD: OFF");click(c,"Cinematic Zoom: ON");
         c.runOnClient(mc -> {
             String label="Key: "+ClientTweaks.zoomKey.getTranslatedKeyMessage().getString();
             for(var child:List.copyOf(mc.gui.screen().children()))if(child instanceof StudioUi.Action a && a.getMessage().getString().equals(label)){a.onPress(new MouseButtonInfo(1,0));break;}
@@ -104,26 +105,26 @@ public final class HudSmokeTest implements FabricClientGameTest {
         click(c,"Back");
         click(c,"Freecam");click(c,"> Controls");click(c,"Activation: Toggle");click(c,"Exit on damage: ON");
         click(c,"Movement");click(c,"Flight: Horizontal");click(c,"Block collision: OFF");c.takeScreenshot("freecam-movement-settings");
-        click(c,"Display");click(c,"Show player: ON");click(c,"Show HUD: ON");click(c,"Submersion fog: OFF");c.takeScreenshot("freecam-display-settings");
+        click(c,"Display");click(c,"Show Player: ON");click(c,"Show HUD: ON");click(c,"Submersion Fog: OFF");c.takeScreenshot("freecam-display-settings");
         c.runOnClient(mc -> {
             var loaded=HudConfig.load();
             check(loaded.freecamHold && loaded.freecamLookFlight && loaded.freecamCollision && !loaded.freecamDisableOnDamage
                 && !loaded.freecamShowPlayer && !loaded.freecamShowHud && loaded.freecamShowSubmersion,"Freecam options not saved");
         });
         click(c,"Back");click(c,"Visuals");
-        c.runOnClient(mc -> check(modules(mc).equals(List.of("No camera shake","No explosions","Full Bright")),"Visual effects category incorrect"));
+        c.runOnClient(mc -> check(modules(mc).equals(List.of("No Camera Shake","No Explosions","Full Bright")),"Visual effects category incorrect"));
         click(c,"Full Bright");click(c,"Enabled: OFF");
         c.runOnClient(mc -> check(HudConfig.load().tweaks.get("full_bright").visible,"Full Bright toggle not persisted"));
         click(c,"Enabled: ON");click(c,"Back");
         click(c,"Game HUD");
-        c.runOnClient(mc -> check(modules(mc).equals(List.of("Scoreboard","Boss bars","Status effects","Player tab","Combo Meter")),"Vanilla HUD category incorrect"));
+        c.runOnClient(mc -> check(modules(mc).equals(List.of("Scoreboard","Boss Bars","Status Effects","Player Tab","Combo Meter")),"Vanilla HUD category incorrect"));
         c.runOnClient(mc -> {
             var screen=mc.gui.screen();
-            for(var child:screen.children())if(child instanceof ModuleCard card && card.getMessage().getString().equals("Status effects")) {
+            for(var child:screen.children())if(child instanceof ModuleCard card && card.getMessage().getString().equals("Status Effects")) {
                 screen.mouseClicked(mouse(card.getX()+10,card.getY()+10,org.lwjgl.sdl.SDLMouse.SDL_BUTTON_RIGHT),false);break;
             }
         });
-        click(c,"Time remaining: OFF");
+        click(c,"Time Remaining: OFF");
         c.runOnClient(mc -> check(HudConfig.load().effectsShowTime,"Effect timer option not persisted"));
         click(c,"Keystrokes");click(c,"WASD");c.waitForScreen(HudEditorScreen.class);
         c.runOnClient(mc -> {
@@ -163,7 +164,7 @@ public final class HudSmokeTest implements FabricClientGameTest {
             check(HudStudioClient.config.themeColor!=0xff669cdd,"HSV colour selection failed");
             var loaded=HudConfig.load();check(loaded.themeColor==HudStudioClient.config.themeColor && Math.abs(loaded.opacity-.5)<.02,"Global appearance was not saved");
         });
-        c.waitTicks(3);c.takeScreenshot("appearance");click(c,"Reset appearance");
+        c.waitTicks(3);c.takeScreenshot("appearance");click(c,"Reset Appearance");
         c.runOnClient(mc -> check(HudWidgets.vanillaOffhand(),"Appearance reset did not restore vanilla offhand"));
         click(c,"Back");c.runOnClient(mc -> mc.gui.screen().onClose());
         try(var world=c.worldBuilder().create()){
@@ -175,7 +176,7 @@ public final class HudSmokeTest implements FabricClientGameTest {
             });
             c.waitTicks(5);c.takeScreenshot("vanilla-defaults");
             c.runOnClient(mc -> mc.gui.setScreen(ModMenu.getConfigScreen("hud-studio",null)));
-            click(c,"Inventory");click(c,"Add slot");click(c,"Helmet");click(c,"Add display");
+            click(c,"Inventory");click(c,"Add Slot");click(c,"Helmet");click(c,"Add Display");
             c.waitForScreen(HudEditorScreen.class);
             c.runOnClient(mc -> {
                 var e=HudStudioClient.config.slots.getFirst();var screen=mc.gui.screen();
@@ -215,7 +216,7 @@ public final class HudSmokeTest implements FabricClientGameTest {
                 check(found,"Individual slot opacity slider missing");
                 check(HudStudioClient.config.slots.getFirst().opacity==1,"Slot draft changed saved config prematurely");
             });
-            c.waitTicks(3);c.takeScreenshot("slot-picker");click(c,"Use this slot");
+            c.waitTicks(3);c.takeScreenshot("slot-picker");click(c,"Use This Slot");
             c.runOnClient(mc -> {
                 var e=HudStudioClient.config.slots.getFirst();
                 check(Math.abs(e.opacity-.4)<.01,"Slot opacity was not applied");
@@ -306,9 +307,10 @@ public final class HudSmokeTest implements FabricClientGameTest {
             });
             c.waitTicks(3);c.takeScreenshot("aligned-wasd-and-stats");
             testNewFeatures(c,world.getServer());
+            NavigationSmokeTest.run(c,world.getServer());
             c.runOnClient(mc -> {
                 HudStudioClient.config=HudConfig.defaults();HudStudioClient.config.save();
-                try{java.nio.file.Files.writeString(java.nio.file.Path.of("hud-result.txt"),"PASS: CPS category migration, Appearance position, five client tweaks and settings, vertical joining and end caps, freecam movement without body/aim changes, freelook camera restoration, zoom FOV, explosion filtering, real server-confirmed melee combo, eight style ranks/shorter timers/crit multiplier/timeout/interruption, bundled sounds, prior HUD regressions");}
+                try{java.nio.file.Files.writeString(java.nio.file.Path.of("hud-result.txt"),"PASS: HUD, inventory, camera, Full Bright rendered OFF/ON/restoration, effects and combo regressions; N/U/M waypoint creation/list/map, defaults and rounded coordinates, editor validation/save/cancel, vanilla palette, rendered hide/show, confirmed delete, search/pagination, persistence and world/dimension isolation, corrupt-file preservation, terrain cache reload, map markers/dimensions, anchored zoom and panning, Studio navigation buttons");}
                 catch(java.io.IOException e){throw new RuntimeException(e);}
             });
         }
@@ -325,14 +327,18 @@ public final class HudSmokeTest implements FabricClientGameTest {
             double gamma=mc.options.gamma().get();
             extractor.tick();extractor.extract(state,0);
             float normal=state.brightness;
+            var normalAmbient=new org.joml.Vector3f(state.ambientColor);
             config.tweaks.get("full_bright").visible=true;
             extractor.tick();extractor.extract(state,0);
-            check(state.brightness>90,"Full Bright did not override actual lightmap gamma");
+            check(state.ambientColor.equals(new org.joml.Vector3f(1,1,1)),"Full Bright did not supply full ambient light");
+            check(state.darknessEffectScale==0 && state.bossOverlayWorldDarkening==0,"Full Bright retained lightmap darkening");
             check(mc.options.gamma().get()==gamma,"Full Bright changed saved brightness");
             config.tweaks.get("full_bright").visible=false;
             extractor.tick();extractor.extract(state,0);
             check(Math.abs(state.brightness-normal)<.001,"Full Bright did not restore lighting");
+            check(state.ambientColor.equals(normalAmbient),"Full Bright did not restore ambient lighting");
         });
+        testDarkRoom(c,serverContext);
         serverContext.runCommand("effect give @p minecraft:speed 150 0 false");
         serverContext.runCommand("effect give @p minecraft:weakness 45 0 false");
         serverContext.runCommand("effect give @p minecraft:night_vision infinite 0 false");
@@ -389,6 +395,10 @@ public final class HudSmokeTest implements FabricClientGameTest {
             ClientTweaks.toggleFreecam(mc);
             check(ClientTweaks.freecam(),"Freecam did not enable");
             check(mc.getCameraEntity()!=mc.player,"Freecam did not detach rendering while retaining player simulation");
+            int cameraId=mc.getCameraEntity().getId();
+            check(cameraId<0 && mc.level.getEntity(cameraId)==null,"Freecam camera needs a private client ID");
+            // Essential asks the player renderer to extract the camera's equipment.
+            mc.getEntityRenderDispatcher().getRenderer(mc.getCameraEntity()).createRenderState(mc.getCameraEntity(),0);
             ClientTweaks.turn(0,500);
             mc.options.keyUp.setDown(true);
         });
@@ -527,6 +537,36 @@ public final class HudSmokeTest implements FabricClientGameTest {
         c.runOnClient(mc -> check(!ComboMeter.state.active(),"Incoming server damage did not interrupt combo"));
         c.takeScreenshot("broken-combo");
         testDamageKinds(c,serverContext);
+    }
+    private static void testDarkRoom(ClientGameTestContext c,net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext server) {
+        var origin=c.computeOnClient(mc->mc.player.position());
+        server.runCommand("fill -4 98 -4 4 105 4 minecraft:stone hollow");
+        server.runCommand("tp @p 0 99 0 0 0");
+        c.waitTicks(40);
+        var dark=c.takeScreenshot("fullbright-dark-room-off");
+        c.runOnClient(mc->HudStudioClient.config.tweaks.get("full_bright").visible=true);
+        c.waitTicks(5);
+        var bright=c.takeScreenshot("fullbright-dark-room-on");
+        c.runOnClient(mc->HudStudioClient.config.tweaks.get("full_bright").visible=false);
+        c.waitTicks(5);
+        var restored=c.takeScreenshot("fullbright-dark-room-restored");
+        double off=roomBrightness(dark),on=roomBrightness(bright),after=roomBrightness(restored);
+        check(on>off+40,"Full Bright did not brighten rendered darkness: "+off+" -> "+on);
+        check(Math.abs(after-off)<5,"Disabling Full Bright did not restore rendered darkness: "+off+" -> "+after);
+        server.runCommand("tp @p "+origin.x+" "+origin.y+" "+origin.z);
+        server.runCommand("fill -4 98 -4 4 105 4 minecraft:air");
+        c.waitTicks(10);
+    }
+    private static double roomBrightness(java.nio.file.Path path) {
+        try {
+            var image=javax.imageio.ImageIO.read(path.toFile());double sum=0;int count=0;
+            // Sample the wall above the crosshair, clear of the hand and HUD.
+            for(int y=image.getHeight()/3;y<image.getHeight()*5/12;y++)
+                for(int x=image.getWidth()/3;x<image.getWidth()*2/3;x++) {
+                    int rgb=image.getRGB(x,y);sum+=((rgb>>16&255)+(rgb>>8&255)+(rgb&255))/3.0;count++;
+                }
+            return sum/count;
+        }catch(java.io.IOException e){throw new RuntimeException(e);}
     }
     private static void testDamageKinds(ClientGameTestContext c,net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext server) {
         String[][] projectiles={{"arrow","arrow"},{"spectral_arrow","arrow"},{"firework_rocket","fireworks"},

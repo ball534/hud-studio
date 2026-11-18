@@ -11,14 +11,14 @@ public final class AppearanceScreen extends StudioScreen {
     private int left,hueY,planeY,size,previewX,previewWidth,drag;
     private float hue,saturation,value;
     private static final int[] PRESETS={0xff101010,0xffeeeeee,0xffe65d5d,0xffedb858,0xff70c18c,0xff669cdd,0xffa17cda,0xffdf83b5};
-    public AppearanceScreen(Screen parent) {super("Global appearance",parent);}
+    public AppearanceScreen(Screen parent) {super("Global Appearance",parent);}
     @Override protected void init() {
         clearWidgets();
         float[] hsv=StudioTheme.hsv(StudioTheme.color());hue=hsv[0];saturation=hsv[1];value=hsv[2];
         int w=Math.min(360,width-24);left=(width-w)/2;hueY=46;planeY=64;size=Math.min(116,height-108);
         previewX=left+size+20;previewWidth=left+w-previewX;
         addRenderableWidget(new OpacitySlider(previewX,142,previewWidth));
-        addRenderableWidget(new StudioUi.Action(previewX,181,previewWidth,18,"Reset appearance",()->{
+        addRenderableWidget(new StudioUi.Action(previewX,181,previewWidth,18,"Reset Appearance",()->{
             HudStudioClient.config.themeColor=0xff101010;HudStudioClient.config.opacity=.85f;
             HudStudioClient.config.save();init();
         }));
@@ -31,7 +31,7 @@ public final class AppearanceScreen extends StudioScreen {
         saveColor();
     }
     @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float a) {
-        StudioUi.centered(g,"Global appearance",width/2f,12,width-24,1f,StudioUi.TEXT);
+        StudioUi.centered(g,"Global Appearance",width/2f,12,width-24,1f,StudioUi.TEXT);
         StudioUi.centered(g,"Choose a colour and opacity for your HUD panels.",width/2f,28,width-24,.7f,StudioUi.MUTED);
         for(int x=0;x<size;x+=2) g.fill(left+x,hueY,left+Math.min(x+2,size),hueY+10,StudioTheme.hsv(x/(float)size,1,1));
         for(int y=0;y<size;y+=4) for(int x=0;x<size;x+=4)

@@ -20,6 +20,7 @@ public final class HudConfig {
     public float freecamVerticalSpeed=1,freecamSprintMultiplier=1.5f;
     public boolean snap = true;
     public boolean effectsShowTime = false;
+    public boolean waypointsEnabled=true,waypointShowName=true,waypointShowDistance=true;
     public int themeColor = 0xff101010;
     public float opacity = .85f;
     public static final String[] VANILLA = {"scoreboard", "bossbar", "player_tab", "effects", "offhand"};

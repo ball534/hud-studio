@@ -11,29 +11,31 @@ import net.minecraft.network.chat.Component;
 import com.mojang.blaze3d.platform.InputConstants;
 
 public final class ModuleCard extends AbstractButton {
-    public static final int SIZE=68;
     private final HudConfig.Element element;
-    private final String[] description;
     private final Runnable open;
     private final java.util.function.BiConsumer<Integer,Integer> menu;
     private final int clipLeft,clipTop,clipRight,clipBottom;
-    public ModuleCard(int x,int y,HudConfig.Element e,String[] description,Runnable open,
+    public ModuleCard(int x,int y,int width,int height,HudConfig.Element e,String[] description,Runnable open,
                       java.util.function.BiConsumer<Integer,Integer> menu,int left,int top,int right,int bottom) {
-        super(x,y,SIZE,SIZE,Component.literal(e==null?"Add slot":HudLayout.name(e)));
-        this.element=e;this.description=description;this.open=open;this.menu=menu;
+        super(x,y,width,height,Component.literal(e==null?"Add Slot":HudLayout.name(e)));
+        this.element=e;this.open=open;this.menu=menu;
         clipLeft=left;clipTop=top;clipRight=right;clipBottom=bottom;
-        setTooltip(Tooltip.create(Component.literal(e==null?"Add an inventory or armour display":HudLayout.name(e)+
-            (java.util.Arrays.asList(HudConfig.TWEAKS).contains(e.id)?" · Click to configure; Space toggles":" · Click to arrange; Space toggles visibility"))));
+        setTooltip(Tooltip.create(Component.literal(e==null?"Add an inventory or armour display":String.join(" ",description))));
     }
     private boolean hasMenu() {return element!=null && (element.id.startsWith("slot_") || element.id.equals("offhand") || element.id.equals("effects"));}
+    private int toggleWidth() {return Math.min(64,width-6);}
+    private int toggleHeight() {return height>=30?18:13;}
+    private int toggleX() {return getX()+(width-toggleWidth())/2;}
+    private int toggleY() {return getY()+height-toggleHeight()-3;}
     private boolean inToggle(double x,double y) {
-        return element!=null && x>=getX()+14 && x<getX()+SIZE-14 && y>=getY()+53 && y<getY()+SIZE-2;
+        return element!=null && x>=toggleX() && x<toggleX()+toggleWidth()
+            && y>=toggleY() && y<toggleY()+toggleHeight();
     }
     private void toggle() {element.visible=!element.visible;HudStudioClient.config.save();}
     @Override public void onPress(InputWithModifiers input) {
         if(input instanceof MouseButtonEvent e) {
             if(inToggle(e.x(),e.y())) {toggle();return;}
-            if(hasMenu() && e.x()>=getX()+SIZE-13 && e.y()<getY()+13) {menu.accept((int)e.x(),(int)e.y());return;}
+            if(hasMenu() && e.x()>=getX()+width-13 && e.y()<getY()+13) {menu.accept((int)e.x(),(int)e.y());return;}
         }
         open.run();
     }
@@ -50,9 +52,9 @@ public final class ModuleCard extends AbstractButton {
         return super.keyPressed(event);
     }
     private String shortName() {
-        if(element==null) return "Add slot";
+        if(element==null) return "Add Slot";
         if(element.id.equals("effects")) return "Effects";
-        if(element.id.equals("no_shake")) return "No shake";
+        if(element.id.equals("no_shake")) return "No Shake";
         if(element.id.startsWith("slot_") && element.slot<36)
             return element.slot<9?"Hotbar "+(element.slot+1):"Inventory "+(element.slot-8);
         return HudLayout.name(element);
@@ -60,19 +62,20 @@ public final class ModuleCard extends AbstractButton {
     @Override protected void extractContents(GuiGraphicsExtractor g,int mx,int my,float a) {
         g.enableScissor(clipLeft,clipTop,clipRight,clipBottom);
         int x=getX(),y=getY();boolean hovered=isMouseOver(mx,my);
-        StudioUi.card(g,x,y,SIZE,SIZE,hovered || isFocused()?0xff252525:StudioUi.CARD);
-        if(isFocused()) g.outline(x,y,SIZE,SIZE,StudioTheme.accent());
-        StudioIcons.draw(g,element==null?"add":element.id,x+(SIZE-16)/2,y+7);
-        StudioUi.centered(g,shortName(),x+SIZE/2f,y+27,SIZE-8,.8f,StudioUi.TEXT);
-        for(int i=0;i<Math.min(2,description.length);i++)
-            StudioUi.centered(g,description[i],x+SIZE/2f,y+39+i*7,SIZE-8,.65f,StudioUi.MUTED);
+        StudioUi.card(g,x,y,width,height,hovered || isFocused()?0xff929292:StudioUi.CARD);
+        if(isFocused()) g.outline(x,y,width,height,StudioTheme.accent());
+        String icon=element==null?"add":element.id;
+        if(height>=54)StudioIcons.draw(g,icon,x+(width-16)/2,y+5);
+        int titleY=height>=54?24:element==null?7:Math.max(1,Math.min(7,(toggleY()-y-8)/2));
+        boolean inlineIcon=height>=40 && height<54 && width>=64;
+        if(inlineIcon)StudioIcons.draw(g,icon,x+4,y+titleY-4);
+        StudioUi.centered(g,shortName(),x+width/2f+(inlineIcon?8:0),y+titleY,width-(inlineIcon?24:8),1,0xff202020);
         if(element!=null) {
-            int tx=x+(SIZE-28)/2,ty=y+56;
-            StudioUi.box(g,tx,ty,28,9,element.visible?StudioTheme.accent():0xff363636);
-            StudioUi.centered(g,element.visible?"ON":"OFF",x+SIZE/2f,ty+2,26,.65f,element.visible?StudioTheme.textOn(StudioTheme.accent()):0xffbbbbbb);
+            StudioUi.button(g,toggleX(),toggleY(),toggleWidth(),toggleHeight(),element.visible?StudioTheme.accent():StudioUi.BUTTON_SELECTED,hovered && inToggle(mx,my));
+            StudioUi.centered(g,element.visible?"ON":"OFF",x+width/2f,toggleY()+(toggleHeight()-7)/2f,toggleWidth()-2,1,element.visible?StudioTheme.textOn(StudioTheme.accent()):0xffbbbbbb);
         }
         if(hasMenu()) {
-            for(int i=0;i<3;i++) g.fill(x+SIZE-10+i*2,y+5,x+SIZE-9+i*2,y+6,0xffaaaaaa);
+            for(int i=0;i<3;i++) g.fill(x+width-10+i*2,y+3,x+width-9+i*2,y+4,0xffaaaaaa);
         }
         g.disableScissor();
     }

@@ -1,0 +1,3 @@
+# HUD Studio 1.9
+
+**Fabric 26.3** — Added a persistent world map with fog over unexplored terrain, vanilla map colors, and banner-colored waypoints; added waypoint creation, search, editing, visibility controls, and map shortcuts to copy coordinates or teleport. Redesigned Studio with vanilla-style controls, a combined HUD category, and clearer module icons. Fixed Full Bright and freecam stability, kept inventory access and hotbar selection in freecam, improved keystroke contrast, and made custom HUD slots dim with menus. **Forge 1.8.9** — Rebuilt the existing legacy feature set under the 1.9 release number.

@@ -1,4 +1,124 @@
-# ball's hud studio 1.8 validation
+# ball's hud studio validation
+
+## Fabric 1.12.7 stable panning, feedback and HUD menu dimming (2026-11-18)
+
+The map raster now snaps its sampling phase to a world-anchored GUI-pixel grid and computes source positions from that integer grid before dividing by zoom. This prevents both fractional-drag resampling and floating-point boundary changes from deforming terrain pixels during pans. Patterned-raster comparisons verify identical pixels after a subpixel pan, and exact one-pixel translations in all four directions at zooms 0.125, 0.256, 0.4096, 0.8 and 1.25.
+
+World highlights render one block below the saved waypoint Y. Native text displays move down one block plus another 0.2 blocks, and all labels use the exact saved RGB colour, including dark colours. The map opens with a 240 ms eased fade/slide; marker hover labels fade and slide up over 180 ms. Click/scroll hit testing follows the opening offset. Copy Coords keeps the clipboard format and displays a green Coords Copied! notice with X/Y/Z on a second line for 2.5 seconds.
+
+Hide/Show is now 36 GUI pixels wide, sufficient for Show at the native font size. Custom HUD elements attach after the vanilla hotbar instead of after the deferred subtitles layer, allowing menu backgrounds to dim their frames and items naturally. A screenshot comparison measures diamond pixels in both a custom slot and the vanilla hotbar before/after opening inventory and verifies matching dimming. Native display tests verify the lowered anchor and exact gold/dark-blue colours. Screenshots cover the manager, copied-coordinate notice, map/hover animation states and dimmed HUD. The known native test-client shutdown crash remains after completed assertions.
+
+## Fabric 1.12.6 native world labels and map independence (2026-11-18)
+
+Enabled, Show Names and Show Distances now control only world waypoints. Map markers and their hover labels remain available with all three options disabled; per-waypoint Hide still hides that marker. World labels are local vanilla TextDisplay entities with centred billboarding, the default background, full brightness and see-through text. They follow normal text-display perspective sizing. Labels are updated/removed as settings, names, coordinates, dimensions or connections change, with no server entity or summon command.
+
+Map terrain, fog and outline now share one GUI-pixel composite. Repeated Gaussian filtering rounds the surveyed mask; neighbouring terrain colours extend underneath the blend to prevent white seams. The edge fades smoothly into both sides and retains the native map palette away from the boundary. Both close-button backgrounds use alpha 128, including hover. The waypoint manager sorts shown entries before hidden entries, case-insensitively by name within each group, uses italic hidden names and a separate X/Y/Z coordinate column.
+
+Integration checks exercise native display creation, settings changes and removal, map markers/menus and hover labels with world toggles off, sorting and movement between shown/hidden groups, surface-only mapping and persistence. Screenshots cover native near/far text displays, manager styling and fractional map zoom levels. The existing native test-client shutdown crash remains separate from completed assertions.
+
+## Fabric 1.12.5 surface-only maps (2026-11-18)
+
+Removed underground detection, altitude-specific layers, cave-floor sampling and cave-wall shading. The renderer and context-menu height lookup always use the current dimension's surface map. Survey queues reset only on dimension changes. The saved-map index accepts only valid dimension identifiers, so old altitude-layer directories are ignored while existing surface maps remain usable.
+
+The revised integration check builds a solid roof above an underground room and verifies that surveying from inside records the roof at Y=48, then reloads that surface data from disk. It also places an obsolete altitude-layer directory in the test store and verifies that it is absent from the dimension index. The full waypoint/map regression checks remain in the same run. The previously documented native test-client shutdown crash is separate from these assertions.
+
+## Fabric 1.12.4 map hover and fog edges (2026-11-18)
+
+Map labels fade in and out over 180 ms, above the vanilla banner, with centred native-size glyphs and even background padding. In-world labels explicitly reset the GUI transform before drawing, keeping their glyphs independent of other HUD scaling. The close button uses a 15x15 box to centre the odd-width lowercase x's visible ink exactly, a half-transparent dark gradient, and the existing opaque red hover state. Popup rows highlight on mouse hover only; opening the menu no longer focuses its first action. Delete text turns red on hover in both map menus and the manager. Module tooltips contain only short descriptions.
+
+An explored-area contour is computed from the current atlas coverage at GUI-pixel resolution, including transparent holes and cross-region boundaries. Two distance passes produce a dark ink outline and feathered shadow on either side of the fog boundary; its thickness remains constant when zooming. The overlay is refreshed when panning, zooming or changing layers and periodically for newly sampled chunks, and its texture is released when leaving the screen.
+
+The compatibility client passed the UI/map checks, including screenshot pixel checks of equal world-label height at 8, 32 and 128 blocks and disappearance of the map hover label after leaving the marker. Inspected hover-on/off, close-button, unselected popup, red popup/manager Delete and fog-edge screenshots. The existing full map, cave, persistence and freecam regression checks also run. The previously documented native crash during test-client shutdown remains a separate limitation.
+
+## Fabric 1.12.3 shared frame and vanilla map markers (2026-11-18)
+
+All categories now keep the Waypoints template's outer width, sidebar position, content origin and Back-button position. The module grid fills that content width with uniform card dimensions shared by HUD, Inventory, Camera and Visuals. Categories with fewer cards retain the same grid and frame rather than contracting the whole menu. The waypoint footer remains centred within the content panel.
+
+Map waypoints use the vanilla `textures/map/decorations/<dye>_banner.png` assets at an integer 2x scale, with the closest vanilla dye colour chosen from the saved RGB colour. Marker picking follows the shorter banner bounds. The player sprite's sixteen-step rotation adds a half-turn. Context menu rows shrink from 20 to 16 GUI pixels, have less horizontal padding and a single black outer outline, and use New Waypoint instead of Create New Waypoint. The 14x14 close button has a native lowercase red x centred over a dark-grey-to-black background; hover or keyboard focus turns the background opaque red and the glyph black.
+
+The final compatibility run wrote map/UI PASS at 00:52:58 and freecam PASS at 00:53:00. Checks verify the sidebar and Back stay fixed across all five categories at 320x240, 640x360 and 854x480 GUI sizes, uniform module dimensions across sections, and the HUD grid filling the shared template. Both map menus still support copy/create/edit/delete/close/teleport. Screenshots of banner markers, compact outlined menus and the normal/active close button were inspected. The previously documented native shutdown crash follows completed assertions.
+
+## Fabric 1.12.2 menu centering and title capitalization (2026-11-18)
+
+The non-waypoint menu now centres the actual sidebar and visible card grid together. Previously card widths were capped while positioning still used the larger reserved content width, leaving excess space on the right. Categories with fewer cards use their actual occupied column count while retaining the same card dimensions. The waypoint footer centres New Waypoint and its three checkboxes as one group within the waypoint content panel, preserving the shared Back-button baseline.
+
+Titles and module/control labels now capitalize each word, including New Waypoint, Boss Bars, Player Tab, No Camera Shake, editor titles and tweak settings. Descriptions, subtitle hints and saved custom waypoint names retain their text. The menu title and Controls category use Ball's HUD Studio.
+
+The client checks verified horizontal centering for all four module categories and the waypoint footer at 320x240, 640x360 and 854x480 GUI sizes. The existing map/UI assertions wrote PASS at 00:40:43 and freecam assertions wrote PASS at 00:40:45. Reviewed the rendered module and waypoint screens. The known native shutdown crash remains after the completed assertions.
+
+## Fabric 1.12.1 unexplored fog (2026-11-18)
+
+Unsurveyed map areas now show an original seamless 128-pixel off-white tile with faint grey squiggles, based on the supplied fog-pattern reference. The tile repeats at native GUI pixel size and pans with the map, beneath terrain and markers. Transparent pixels in partially mapped regions expose the same fog as entirely missing regions. The vanilla parchment border, map palette, explored terrain and transparent outer area are preserved; the reference's lettering is excluded.
+
+Inspected the rendered map screenshot: fog fills both sides of the explored region, with unchanged terrain and parchment. The compatibility run wrote map/UI PASS at 00:36:39 and freecam PASS at 00:36:41. The previously documented native shutdown failure still occurs after the assertions complete.
+
+## Fabric 1.12.0 compact categories and map menus (2026-11-18)
+
+HUD, Inventory, Camera and Visuals now share responsive rectangular card dimensions, chosen against the largest category. The default HUD's sixteen modules fit without scrolling. Their search bars are removed; descriptions remain in tooltips. Waypoints retains a flat Studio-style search background and borderless text field. Back aligns with Appearance's left edge, width and height, and the waypoint creation/checkbox footer uses the same Y position. Narrow windows retain one footer row using checkbox tooltips when labels cannot fit.
+
+Map location right-click menus offer Create new waypoint, Copy coords, Teleport and Close. Pin right-click menus offer Edit, Copy coords, Teleport, Delete and Close. Left-clicking a pin leaves the map and pan position unchanged. Coloured letter badges with pointed bases replace map diamonds, matching Xaero's general marker style using original GUI drawing primitives. Clipboard output uses integer X Y Z; teleport sends the normal tp command, subject to server permissions. The first teleport check confirmed rejection in a world without cheats; the final test world enables commands to verify successful teleportation.
+
+The compatibility run wrote revision PASS at 00:33:16 and freecam PASS at 00:33:17. Assertions cover all sixteen HUD cards fitting, equal dimensions across categories, absent category searches and scrolling, Back/footer alignment, waypoint search filtering, persisted toggles, both map menus, clipboard, create/edit/delete/close, successful teleport, fixed world-label pixel size, vanilla colours, map coverage, cave layers and persistence. Freecam checks cover the real hotbar/selection, blocked targeting/actions, independent camera movement and restoration. Screenshots of the compact grid, waypoint search/footer and both map popups were inspected. The known native shutdown crash still follows completed checks; a clean runtime exit remains unverified.
+
+## Fabric 1.11.1 parchment texture correction (2026-11-18)
+
+The parchment's nine regions now tile at one GUI pixel per logical texture pixel. Previously the long edge and centre slices were stretched independently to the rectangular frame, elongating notches and grain. Full tiles keep matching source/destination sizes, and the final partial tile crops the source instead of scaling it. The 2:1 frame, padding, viewport and close button are unchanged.
+
+The isolated revision assertions wrote PASS at 00:10:09. The rendered parchment screenshot was inspected for consistent edge-pixel proportions. The previously documented native shutdown crash remains after completed assertions.
+
+## Fabric 1.11.0 unified waypoint management (2026-11-18)
+
+Studio's Waypoints category now contains the manager itself. The U-key screen opens that same category and shares its `WaypointPanel`, including search, current-dimension filtering, scrollable rows and the editor. Three compact checkboxes beside New waypoint replace the former module cards: Enabled, Show Names and Show Distances. They wrap beside New waypoint on narrower windows. Studio's Manage and World map footer shortcuts are removed. Four distance sliders and their saved configuration fields are removed; old JSON fields are ignored and no longer filter rendering. Per-waypoint visibility and saved world/dimension data remain intact.
+
+Row actions are inset six GUI pixels from the right edge. Delete immediately saves the removal and refreshes the list without a confirmation screen. Save failures retain the marker and show an error. A screenshot review caught and corrected a clipping scope issue that initially hid the action buttons in the shared panel.
+
+World-space block highlights remain gizmos. Text anchors are projected through the real camera matrix and glyphs render at native HUD size, so labels no longer increase in size with distance or zoom. The test compares actual gold glyph pixel heights at 8 and 32 blocks; the measured heights match. Labels respect the master/name/distance toggles, and map hover labels retain their native font size.
+
+The updated compatibility suite wrote PASS at 00:07:02 for shared Studio/U management, compact persisted toggles, absent sliders/shortcuts, immediate deletion, scrolling/filtering, fixed-size labels, the parchment map, vanilla colours, coverage, cave switching and persistence. Freecam's real-hotbar and blocked-action regression checks also passed. Inspected manager screenshots show the inset action buttons and footer checkboxes. The known native shutdown crash still follows the completed assertions; clean shutdown remains unverified.
+
+## Fabric 1.10.2 parchment map (2026-11-16)
+
+The map now fits a centred outer rectangle with an exact 2:1 width-to-height ratio and at least 16 GUI pixels of space around it. Vanilla `textures/map/map_background.png` supplies the parchment background and ragged edges, drawn in nine slices so the corners and edge thickness retain their proportions. Unexplored terrain shows parchment; the space outside the frame stays transparent. Terrain, markers, picking and zoom limits use the inner paper viewport. The red close X is anchored to the frame's upper-right corner.
+
+The isolated map/UI revision assertions wrote PASS at 00:55:47, including anchored zoom, panning, loaded-chunk coverage, cave switching and persistence. The parchment map screenshot was inspected. The previously documented native shutdown failure still occurs after the assertions complete.
+
+## Fabric 1.10.0 map/UI revision and freecam (2026-11-16)
+
+The map/waypoint work was completed and validated before the requested freecam follow-up. The map and waypoint suite wrote PASS at 00:35:35; the combined map/freecam run wrote PASS markers at 00:38:57 and 00:38:58. Production compilation passed. The client again encounters the documented native 0xC0000005 after completing assertions during shutdown, so clean shutdown remains unverified.
+
+Map colour calculations were checked against the cached vanilla `MapItem` bytecode. Surface colours use `BlockState.getMapColor()` and `MapColor.calculateARGBColor()` with vanilla scale-zero height-difference, checker parity and water-depth shade thresholds. The previous biome-tint substitution is removed. The pointer directly uses Minecraft's 8x8 player map-decoration PNG with sixteen rotation steps. Xaero colour matching was superseded by the user's explicit vanilla filled-map request.
+
+Sampling now prioritises unrecorded chunks, rebuilds its work list regularly, only acknowledges successful samples, and captures unsurveyed chunks before unload. A real-client assertion checks every column in received chunks within a 7x7 chunk neighbourhood for missing pixels. New tile headers record chunk completion while still accepting legacy surface tiles. Legacy loaded areas are refreshed into the new palette; archived unloaded areas retain their prior colours until received again. Cave detection and floor sampling use an independently persisted per-dimension/per-altitude layer, with a 24-block floor search limit. Tests enter a roofed stone chamber, verify floor Y=34, return to the surface and reload the cave tile from disk without overwriting surface data.
+
+Inspected screenshots verify the native-scale, integer-position menu font; merged HUD category; waypoint master/name/distance controls and four distance sliders; 176x166 editor; smaller diamond/name/coordinate/action rows with continuous scrolling and current-dimension default; and transparent map with just the red X. Tests cover filter counts, scrolling, removed controls, slider ordering/persistence, palette shades and anchored zoom/panning. Map labels are hover-only to avoid dense marker text overlap. Sliders span 0-4096 blocks and use a cubic position curve for finer control near zero.
+
+Freecam clears the crosshair pick entity and replaces block/entity hit results with a miss. Minecraft and game-mode hooks block attacking, breaking, use/interact, picking, dropping, hand swapping and inventory actions while preserving player simulation and camera movement. The HUD's camera-player lookup now returns the real LocalPlayer during freecam, so native hotbar items, offhand, selection and player HUD values remain intact. Tests verify the actual HUD source, real inventory/selection, miss targeting, blocked break/use/drop/swap/inventory input, unchanged player position, camera movement and restoration. A screenshot shows the diamond pickaxe, selected diamond sword, 64 torches and offhand shield while detached.
+
+Run this revision suite with `gradlew.bat runClient --offline --no-configuration-cache -I client-test.gradle -PcompatibilityClient -PvisualRevision -PfreecamRevision`. It uses the isolated copied modpack. The pre-1.10 monolithic HUD smoke flow retains old category assumptions; the revision flow exercises the changed categories and controls directly. Live public-server/Realms sessions and a natural terrain flight replay were not exercised.
+
+## Fabric 1.9.0 waypoints and world map (2026-11-15)
+
+Added independent waypoint storage/editor/list, N/U/M key bindings, highlighted world-space block cubes and labels, plus a persistent north-up fullscreen surface map. The supplied `xaeroworldmap-fabric-26.3-1.47.2.jar` was inspected as a workflow reference (fullscreen exploration, pan/zoom, dimensions and marker editing). HUD Studio's implementation does not require Xaero or read its save format. The Forge project is unchanged.
+
+Waypoints are stored atomically under a hash of the single-player world path or multiplayer server address; each record also carries its dimension. Drafts copy existing records and commit only on Save. Corrupt waypoint files are preserved and editing is disabled rather than overwriting data. The map samples at most two loaded client chunks per tick, uses biome/block colours and height shading, and keeps a maximum of 256 128x128 regions in memory. Tile snapshots are compressed and written on a single background worker; world reads and texture operations stay on the client thread. Cached coverage survives unloading, and both map and marker data survive reloads. Paused menus can finish surveying already loaded chunks without advancing world simulation.
+
+The complete compatibility assertion suite wrote PASS at **18:07:33** with the user's mod set loaded, including Sodium, Essential, BadOptimizations, C2ME, Lithium, EntityCulling, ImmediatelyFast and Simple Voice Chat. Verified N/U/M through simulated keyboard input; default Waypoint name, negative/fractional coordinate rounding and the vanilla 16-colour palette; editable names and XYZ, invalid coordinate rejection, Save and Cancel; persisted hide/show and confirmed deletion; search and pagination; world/dimension isolation and corrupt-file preservation; disk round trips for waypoints and terrain tiles; map marker editing, right-click creation, dimension switching, cursor-anchored zoom and dragging; and Studio's mouse-access navigation buttons. Existing HUD, inventory, camera, rendered Full Bright, effect timer and combo assertions also passed. Screenshot comparisons verify visible gold block geometry disappears when hidden and returns when shown. Screenshots of the editor, list, world highlight and map were inspected, including coloured terrain fixtures and the separate Nether view.
+
+Simple Voice Chat binds N and M too, and its onboarding screen intercepts them on a fresh configuration. The compatibility tests unbind those two voice-chat actions only within the isolated test session. Production retains the requested N/U/M defaults and leaves other mods' bindings intact; users running both must resolve the N/M conflicts in Controls, or use Studio's Waypoints/World map buttons. The test intentionally logs an error when checking a malformed waypoint fixture.
+
+As in earlier versions, the assertion run subsequently encounters the native **0xC0000005 shutdown crash**, so the Gradle launch task returns failure after the PASS marker. Clean test-client shutdown remains unverified. Live public-server/Realms sessions and Nether terrain sampling were not exercised; dimension view switching and independent persisted marker filtering were exercised in the isolated client. The map has no separate cave-layer view or Xaero data import.
+
+## Fabric 1.8.1 compatibility fixes (2026-11-15)
+
+The user's archived `2026-11-15-4.log.gz` identifies the freecam failure: Essential's camera-cosmetics render path calls `Entity.getId()` on StudioCamera, throwing `IllegalStateException: Tried to access entity ID before ID assignment`. Client-created entities start with an unassigned ID in 26.3. Freecam now assigns a distinct negative client ID before exposing the camera, skips IDs already present in the world, and keeps the camera outside the world's entity collection.
+
+BadOptimizations 2.4.1 cancels lightmap ticks when its tracked vanilla inputs are unchanged. HUD Studio's toggle did not invalidate that cache, so lighting could remain unchanged indefinitely. Full Bright now invalidates extraction on both toggle transitions and supplies white ambient light instead of relying on gamma extrapolation, which cannot illuminate black in 26.3's shader. Darkness and boss lightmap attenuation are suppressed while enabled. Saved brightness and player effects are untouched.
+
+The isolated full client assertion suite wrote PASS at 17:36:16 with copies of the user's installed mods, including Essential 1.5.2, BadOptimizations 2.4.1, Sodium 0.9.2, EntityCulling 1.12.1, ImmediatelyFast 1.17.1, Lithium, C2ME, Fabric API 0.166.2 and Mod Menu 21.0.1. The new dark-room screenshot assertion measured average wall RGB brightness 10.01 OFF, 101.08 ON and 10.01 restored. Freecam activation, renderer extraction of the camera, movement, player visibility, hold activation, damage exit and camera restoration passed, along with the existing HUD, effects, zoom, freelook and combo assertions. The client subsequently hit the previously documented native 0xC0000005 shutdown crash; the launch task therefore exits unsuccessfully despite the completed assertions. Clean shutdown remains unverified. Forge is unchanged by this Fabric fix.
+
+Compatibility tests run with `gradlew.bat runClient --offline --no-configuration-cache -I client-test.gradle -PcompatibilityClient`, with third-party JARs copied into `build/client-test/mods`. Packaged test mods and a direct Knot launch avoid Essential's development remapper requiring nonexistent tiny mappings for unobfuscated 26.3. These JARs are separate from the production release.
+
+## Original 1.8 validation
 
 Version 1.8 (2026-11-15): added Full Bright under Visuals and the Effects context-menu Time remaining option for Fabric 26.3 and Forge 1.8.9. Both options default OFF. Existing configuration loading adds the missing tweak without replacing saved placements, slots or other settings. Full Bright supplies gamma 100 to each version's lightmap calculation and does not modify the brightness option or add a potion effect. The approach was checked against the actual cached Minecraft bytecode and lightmap shader, with [Gamma Utils' project documentation](https://github.com/Sjouwer/gamma-utils) consulted for gamma behavior.
 

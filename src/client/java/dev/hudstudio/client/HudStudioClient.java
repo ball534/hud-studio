@@ -9,6 +9,11 @@ public final class HudStudioClient implements ClientModInitializer {
     @Override public void onInitializeClient() {
         config = HudConfig.load();
         ClientTweaks.init();
-        HudElementRegistry.addLast(Identifier.fromNamespaceAndPath("hud-studio","widgets"),(g,d) -> {if(!ClientTweaks.hideHud())HudWidgets.draw(g,false);});
+        dev.hudstudio.client.navigation.Navigation.init();
+        HudElementRegistry.attachElementAfter(net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements.HOTBAR,Identifier.fromNamespaceAndPath("hud-studio","widgets"),(g,d) -> {
+            if(!ClientTweaks.hideHud()) {
+                HudWidgets.draw(g,false);
+            }
+        });
     }
 }

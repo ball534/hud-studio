@@ -17,7 +17,7 @@ public final class SlotPickerScreen extends StudioScreen {
     private float inventoryScale;
     private float slotOpacity;
     public SlotPickerScreen(Screen parent,HudConfig.Element editing) {
-        super(editing==null?"Add inventory display":"Change inventory slot",parent);this.editing=editing;chosen=editing==null?0:editing.slot;
+        super(editing==null?"Add Inventory Display":"Change Inventory Slot",parent);this.editing=editing;chosen=editing==null?0:editing.slot;
         slotOpacity=editing==null?1:editing.opacity;
     }
     @Override protected void init() {
@@ -31,7 +31,7 @@ public final class SlotPickerScreen extends StudioScreen {
         cell(40,76,61);
         addRenderableWidget(new SlotOpacitySlider(detailX+12,invY+(int)(166*inventoryScale)-35,detailWidth-24));
         addRenderableWidget(new StudioUi.Action(x,height-24,68,18,"Cancel",this::onClose));
-        addRenderableWidget(new StudioUi.Action(x+w-94,height-24,94,18,editing==null?"Add display":"Use this slot",this::confirm));
+        addRenderableWidget(new StudioUi.Action(x+w-94,height-24,94,18,editing==null?"Add Display":"Use This Slot",this::confirm));
     }
     private void cell(int slot,int sx,int sy) {
         cells.add(new Cell(slot,sx,sy));
@@ -57,7 +57,7 @@ public final class SlotPickerScreen extends StudioScreen {
         HudStudioClient.config.save();minecraft.gui.setScreen(created==null?parent:new HudEditorScreen(parent,created));
     }
     @Override public void extractRenderState(GuiGraphicsExtractor g,int mx,int my,float a) {
-        StudioUi.centered(g,editing==null?"Add inventory display":"Change inventory slot",width/2f,12,width-20,1f,StudioUi.TEXT);
+        StudioUi.centered(g,editing==null?"Add Inventory Display":"Change Inventory Slot",width/2f,12,width-20,1f,StudioUi.TEXT);
         StudioUi.centered(g,"Select the inventory slot to display.",width/2f,28,width-24,.75f,StudioUi.MUTED);
         g.pose().pushMatrix();g.pose().translate(invX,invY);g.pose().scale(inventoryScale,inventoryScale);
         g.blit(RenderPipelines.GUI_TEXTURED,HudWidgets.INVENTORY,0,0,0f,0f,176,166,256,256);
@@ -91,7 +91,7 @@ public final class SlotPickerScreen extends StudioScreen {
     }
     private final class SlotOpacitySlider extends AbstractSliderButton {
         SlotOpacitySlider(int x,int y,int w) {super(x,y,w,27,Component.empty(),slotOpacity);updateMessage();}
-        @Override protected void updateMessage() {setMessage(Component.literal("Slot opacity  "+Math.round(slotOpacity*100)+"%"));}
+        @Override protected void updateMessage() {setMessage(Component.literal("Slot Opacity  "+Math.round(slotOpacity*100)+"%"));}
         @Override protected void applyValue() {slotOpacity=(float)value;}
         @Override public void extractWidgetRenderState(GuiGraphicsExtractor g,int mx,int my,float a) {
             StudioUi.centered(g,getMessage().getString(),getX()+width/2f,getY(),width,.75f,StudioUi.TEXT);

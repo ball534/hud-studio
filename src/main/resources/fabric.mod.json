@@ -2,9 +2,9 @@
 	"schemaVersion": 1,
 	"id": "hud-studio",
 	"version": "${version}",
-	"name": "ball's hud studio",
+	"name": "Ball's HUD Studio",
 	"authors": ["ball534"],
-    "description": "Client-side HUD editor, modular inventory hotbars, camera tweaks and a style combo meter.",
+    "description": "Client-side HUD editor, inventory displays, camera tweaks, combo meter, waypoints and a persistent explored world map.",
 	"license": "CC0-1.0",
 	"environment": "client",
 	"entrypoints": {

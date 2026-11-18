@@ -16,6 +16,7 @@ public final class ClientTweaks {
     private static Vec3 position=Vec3.ZERO,oldPosition=Vec3.ZERO;
     private static float yaw,pitch;
     private static net.minecraft.client.player.RemotePlayer camera;
+    private static int nextCameraId=-1;
     private static net.minecraft.world.entity.Entity previousEntity;
     private static float health;
     private static int hurtTime;
@@ -87,6 +88,9 @@ public final class ClientTweaks {
         health=mc.player.getHealth()+mc.player.getAbsorptionAmount();hurtTime=mc.player.hurtTime;sprinting=false;
         previousEntity=mc.getCameraEntity();
         camera=new net.minecraft.client.player.RemotePlayer(mc.level,new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(),"StudioCamera"));
+        // Renderers, including Essential's camera cosmetics, require a nonzero ID.
+        while(mc.level.getEntity(nextCameraId)!=null)nextCameraId--;
+        camera.setId(nextCameraId--);
         camera.noPhysics=true;
         syncCamera();camera.setOldPosAndRot();
         mc.setCameraEntity(camera);
@@ -122,6 +126,8 @@ public final class ClientTweaks {
         if(camera!=null) {camera.setOldPosAndRot();camera.tickCount++;}
         if(!freecam || mc.gui.screen()!=null || mc.isPaused())return;
         var options=mc.options;
+        while(options.keySwapOffhand.consumeClick()){}
+        while(options.keyDrop.consumeClick()){}
         double forward=(options.keyUp.isDown()?1:0)-(options.keyDown.isDown()?1:0);
         double right=(options.keyRight.isDown()?1:0)-(options.keyLeft.isDown()?1:0);
         double vertical=(options.keyJump.isDown()?1:0)-(options.keyShift.isDown()?1:0);

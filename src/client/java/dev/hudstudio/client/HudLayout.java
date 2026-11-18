@@ -134,9 +134,9 @@ public final class HudLayout {
         if(e.id.startsWith("slot_")) return HudWidgets.slotName(e.slot);
         return switch(e.id) {
             case "scoreboard" -> "Scoreboard";
-            case "bossbar" -> "Boss bars";
-            case "player_tab" -> "Player tab";
-            case "effects" -> "Status effects";
+            case "bossbar" -> "Boss Bars";
+            case "player_tab" -> "Player Tab";
+            case "effects" -> "Status Effects";
             case "offhand" -> "Offhand";
             case "wasd" -> "WASD";
             case "mouse" -> "LMB / RMB";
@@ -151,9 +151,9 @@ public final class HudLayout {
             case "memory" -> "Memory";
             case "combo" -> "Combo Meter";
             case "zoom" -> "Zoom";
-            case "no_shake" -> "No camera shake";
+            case "no_shake" -> "No Camera Shake";
             case "freecam" -> "Freecam";
-            case "no_explosions" -> "No explosions";
+            case "no_explosions" -> "No Explosions";
             case "freelook" -> "Freelook";
             case "full_bright" -> "Full Bright";
             default -> e.id;

@@ -33,24 +33,24 @@ public final class TweakSettingsScreen extends StudioScreen {
         }
         switch(setting.id) {
             case "zoom" -> {
-                slider("Starting zoom",1,50,()->c.zoomFactor,v->c.zoomFactor=(float)v,"x");
+                slider("Starting Zoom",1,50,()->c.zoomFactor,v->c.zoomFactor=(float)v,"x");
                 toggle("Show HUD",()->c.zoomShowHud,v->c.zoomShowHud=v);
-                toggle("Cinematic zoom",()->c.zoomCinematic,v->c.zoomCinematic=v);
+                toggle("Cinematic Zoom",()->c.zoomCinematic,v->c.zoomCinematic=v);
             }
             case "freecam" -> {
                 if(page==0) {
                     action("Activation: "+(c.freecamHold?"Hold":"Toggle"),()->{c.freecamHold=!c.freecamHold;save();});
-                    toggle("Exit on damage",()->c.freecamDisableOnDamage,v->c.freecamDisableOnDamage=v);
+                    toggle("Exit On Damage",()->c.freecamDisableOnDamage,v->c.freecamDisableOnDamage=v);
                 } else if(page==1) {
-                    action("Flight: "+(c.freecamLookFlight?"Follow crosshair":"Horizontal"),()->{c.freecamLookFlight=!c.freecamLookFlight;save();});
-                    slider("Horizontal speed",.1,3,()->c.freecamSpeed,v->c.freecamSpeed=(float)v," blocks/tick");
-                    slider("Vertical speed",.1,3,()->c.freecamVerticalSpeed,v->c.freecamVerticalSpeed=(float)v," blocks/tick");
-                    slider("Sprint boost",1,5,()->c.freecamSprintMultiplier,v->c.freecamSprintMultiplier=(float)v,"x");
-                    toggle("Block collision",()->c.freecamCollision,v->c.freecamCollision=v);
+                    action("Flight: "+(c.freecamLookFlight?"Follow Crosshair":"Horizontal"),()->{c.freecamLookFlight=!c.freecamLookFlight;save();});
+                    slider("Horizontal Speed",.1,3,()->c.freecamSpeed,v->c.freecamSpeed=(float)v," blocks/tick");
+                    slider("Vertical Speed",.1,3,()->c.freecamVerticalSpeed,v->c.freecamVerticalSpeed=(float)v," blocks/tick");
+                    slider("Sprint Boost",1,5,()->c.freecamSprintMultiplier,v->c.freecamSprintMultiplier=(float)v,"x");
+                    toggle("Block Collision",()->c.freecamCollision,v->c.freecamCollision=v);
                 } else {
-                    toggle("Show player",()->c.freecamShowPlayer,v->c.freecamShowPlayer=v);
+                    toggle("Show Player",()->c.freecamShowPlayer,v->c.freecamShowPlayer=v);
                     toggle("Show HUD",()->c.freecamShowHud,v->c.freecamShowHud=v);
-                    toggle("Submersion fog",()->c.freecamShowSubmersion,v->c.freecamShowSubmersion=v);
+                    toggle("Submersion Fog",()->c.freecamShowSubmersion,v->c.freecamShowSubmersion=v);
                 }
             }
         }
@@ -75,7 +75,7 @@ public final class TweakSettingsScreen extends StudioScreen {
             String hint=switch(setting.id) {
                 case "freelook"->"Hold to orbit. Release to restore your view.";
                 case "no_shake"->"Removes walking bob and damage tilt.";
-                case "full_bright"->"Maximum gamma while enabled. Saved brightness is preserved.";
+                case "full_bright"->"Full ambient lighting while enabled. Saved brightness is preserved.";
                 default->"Hides explosion particles; keeps sounds.";
             };
             StudioUi.centered(g,hint,width/2f,row+10,width-28,.72f,StudioUi.MUTED);

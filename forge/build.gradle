@@ -67,6 +67,6 @@ shadowJar {
 remapJar {
     dependsOn shadowJar
     inputFile = shadowJar.archiveFile
-    archiveClassifier = ''
+    archiveClassifier = 'forge1.8.9'
 }
 assemble.dependsOn remapJar

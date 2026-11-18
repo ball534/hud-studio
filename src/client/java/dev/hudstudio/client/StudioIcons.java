@@ -2,40 +2,58 @@ package dev.hudstudio.client;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 
-/** Small monochrome module icons drawn with the same sharp pixels as the HUD. */
+/** Original pixel glyphs for the Studio module cards. */
 public final class StudioIcons {
-    private static final int C=0xffdddddd,D=0xff777777;
-    private static void r(GuiGraphicsExtractor g,int x,int y,int w,int h,int c) {g.fill(x,y,x+w,y+h,c);}
     public static void draw(GuiGraphicsExtractor g,String id,int x,int y) {
-        g.pose().pushMatrix();g.pose().translate(x,y);
-        switch(id) {
-            case "scoreboard" -> {for(int i=0;i<3;i++){r(g,0,i*5,2,2,C);r(g,4,i*5,11,2,C);}}
-            case "bossbar" -> {g.outline(0,2,16,5,C);r(g,2,4,9,1,C);r(g,3,10,10,2,D);}
-            case "player_tab" -> {for(int i=0;i<3;i++){r(g,1,i*5,3,3,C);r(g,6,i*5+1,9,1,C);}}
-            case "effects" -> {r(g,6,0,4,2,C);r(g,6,3,4,4,D);g.outline(3,6,10,9,C);r(g,5,10,6,3,D);}
-            case "offhand" -> {g.outline(2,1,12,9,C);r(g,4,10,8,2,C);r(g,6,12,4,2,C);}
-            case "wasd" -> {key(g,6,0);key(g,0,6);key(g,6,6);key(g,12,6);}
-            case "mouse","left_cps","right_cps" -> {
-                g.outline(3,0,10,16,C);r(g,7,1,1,7,C);r(g,4,7,8,1,C);
-                if(id.equals("left_cps"))r(g,4,2,3,4,C);if(id.equals("right_cps"))r(g,8,2,3,4,C);
-            }
-            case "space" -> {g.outline(0,5,16,7,C);r(g,3,8,10,1,C);}
-            case "sneak" -> {r(g,7,1,3,3,C);r(g,5,6,5,2,C);r(g,3,7,2,6,C);r(g,5,11,7,2,C);}
-            case "sprint" -> {r(g,10,0,3,3,C);r(g,7,4,5,2,C);r(g,6,6,3,4,C);r(g,3,11,5,2,C);r(g,10,9,2,6,C);r(g,0,5,4,1,D);}
-            case "fps" -> {r(g,1,10,3,5,C);r(g,6,6,3,9,C);r(g,11,1,3,14,C);}
-            case "speed" -> {g.outline(0,5,16,10,D);r(g,7,8,2,5,C);r(g,9,5,2,5,C);r(g,3,3,10,1,C);}
-            case "clock" -> {g.outline(1,1,14,14,C);r(g,7,3,1,6,C);r(g,7,8,5,1,C);}
-            case "memory" -> {g.outline(3,3,10,10,C);r(g,6,6,4,4,D);for(int i=4;i<13;i+=4){r(g,i,0,1,3,C);r(g,i,13,1,3,C);r(g,0,i,3,1,C);r(g,13,i,3,1,C);}}
-            case "add" -> {r(g,7,1,2,14,C);r(g,1,7,14,2,C);}
-            case "combo" -> {r(g,2,10,3,5,C);r(g,6,6,3,9,C);r(g,10,1,4,14,C);r(g,0,1,5,2,D);}
-            case "zoom" -> {g.outline(1,1,10,10,C);r(g,10,10,3,3,C);r(g,13,13,3,3,C);r(g,5,3,1,6,D);r(g,3,5,6,1,D);}
-            case "no_shake" -> {r(g,7,1,2,14,C);r(g,0,7,16,2,C);g.outline(4,4,8,8,D);}
-            case "full_bright" -> {g.outline(4,4,8,8,C);r(g,6,6,4,4,C);r(g,7,0,2,3,C);r(g,7,13,2,3,C);r(g,0,7,3,2,C);r(g,13,7,3,2,C);}
-            case "freecam","freelook" -> {g.outline(1,3,14,10,C);r(g,6,6,4,4,D);r(g,3,1,5,2,C);}
-            case "no_explosions" -> {r(g,6,3,4,10,D);r(g,3,6,10,4,D);for(int i=0;i<15;i++)r(g,i,14-i,2,1,C);}
-            default -> {for(int row=0;row<3;row++)for(int col=0;col<3;col++)g.outline(col*5,row*5,4,4,C);}
+        String glyph=switch(id) {
+            case "scoreboard" -> "wwwwwwwww/wgggggggw/wl.lll..w/wl..ll..w/wl...l..w/wl..ll..w/wwwwwwwww";
+            case "bossbar" -> "..ppppp../.pplplpp./ppppppppp/.p.p.p.p./........./kkkkkkkkk/krrrrrssk/kkkkkkkkk";
+            case "player_tab" -> "kkkkkkkkk/kvvvvvvvk/kl..lll.k/kl..lll.k/k.......k/kl..lll.k/kl..lll.k/kkkkkkkkk";
+            case "effects" -> "...www.../...ggg.../....l..../...l.l.../..l...l../.l.ppp.l./.lplpppl./..lllll..";
+            case "offhand" -> "wwwwwwwww/wsslllssw/wsslllssw/.wslllsw./.wslllsw./..wlllw../...www...";
+            case "wasd" -> "....lll..../....lsl..../....kkk..../.........../lll.lll.lll/lsl.lsl.lsl/kkk.kkk.kkk";
+            case "mouse" -> mouse("bbb","bbb","");
+            case "left_cps" -> mouse("ggg","sss","/.g.g....");
+            case "right_cps" -> mouse("sss","ggg","/....g.g.");
+            case "space" -> "llllllllllll/lssssssssssl/ls..llll..sl/lssssssssssl/kkkkkkkkkkkk";
+            case "sneak" -> ".....vv../.....vv../....bbb../...bbbvv./...bb..../..pppp.../....pp.../.wwwwwww.";
+            case "sprint" -> ".......vv/.......vv/....bbb../.s.bbbvv./...bb..../s.ppppp../.pp...pp./kk.....pp";
+            case "fps" -> "kkkkkkkkk/klssssslk/klbsssslk/klbbssslk/klbsssslk/lllllllll/...kkk...";
+            case "speed" -> "..lllll../.lssssl../lgl...bl./l....bl../l...bl..l/l..ll...l/.lsssssl./..lllll..";
+            case "clock" -> "...ggg.../..glllg../.glllllg./glllslllg/glllssllg/glllllllg/.glllllg./..glllg../...ggg...";
+            case "memory" -> "kkkkkkkkkkk/kvvvvvvvvvk/kvkkvkkvkvk/kvkkvkkvkvk/kvvvvvvvvvk/.gggg.gggg.";
+            case "add" -> "lllllllll/lsssgsssk/lsssgsssk/lsgggggsk/lsssgsssk/lsssgsssk/lkkkkkkkk";
+            case "combo" -> ".......ll/......lbk/.....lbk./.g..lbk../..glbk.../...gk..g./..wg..ggg/.wk....g.";
+            case "zoom" -> "..gggg.../.gbbbbg../gbbllbbg./gbblbbbg./gbbbbbbg./.gbbbbgw./..gggg.ww/........w";
+            case "no_shake" -> "s..lll..s/.slkkkls./slkbblkl./..kbbb.k./slkbbbkl./.slkkkls./s..lll..s";
+            case "full_bright" -> "....g..../.g..l..g./..gglgg../..glllg../glllllllg/..glllg../..gglgg../.g..l..g./....g....";
+            case "freecam" -> "...b.b.../...bbb.../.kkkkkkk./kssbbsskr/ksblbbskr/ksbbbbssk/kssbbsskr/.kkkkkkk.";
+            case "freelook" -> ".....bbb../........b./..lllll.../.lbkkkbl.b/lbklllkkbl/.lbkkkbl../..lllll.../.bbb......";
+            case "no_explosions" -> "...wwg.../.....g.../.rrrrrrr./.rlllllr./.rlllllr./.rrrrrrr./........l/..l...ll./...lll...";
+            default -> "lllllllll/lsslsslsk/lsklsslsk/lllllllll/lsslsslsk/lsslsslsk/lkkkkkkkk";
+        };
+        String[] rows=glyph.split("/");
+        int width=0;
+        for(String row:rows)width=Math.max(width,row.length());
+        int left=x+(16-width)/2,top=y+(16-rows.length)/2;
+        for(int row=0;row<rows.length;row++)for(int col=0;col<rows[row].length();col++) {
+            int color=switch(rows[row].charAt(col)) {
+                case 'k' -> 0xff161613;
+                case 's' -> 0xff99968d;
+                case 'l' -> 0xffe7e3d7;
+                case 'g' -> 0xffefbe55;
+                case 'r' -> 0xffec6558;
+                case 'v' -> 0xff83b956;
+                case 'b' -> 0xff79bad6;
+                case 'p' -> 0xffbf8bd4;
+                case 'w' -> 0xffac7850;
+                default -> 0;
+            };
+            if(color!=0)g.fill(left+col,top+row,left+col+1,top+row+1,color);
         }
-        g.pose().popMatrix();
     }
-    private static void key(GuiGraphicsExtractor g,int x,int y) {g.outline(x,y,4,4,C);}
+
+    private static String mouse(String left,String right,String indicator) {
+        return ".kkkkkkk./k"+left+"k"+right+"k/k"+left+"k"+right+"k/kkkkkkkkk/ksssssssk/ksssssssk/.kkkkkkk."+indicator;
+    }
 }

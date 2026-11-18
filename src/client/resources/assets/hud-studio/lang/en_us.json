@@ -1,7 +1,12 @@
 {
-  "key.category.hud-studio.tweaks": "ball's hud studio",
-  "key.categories.hud-studio.tweaks": "ball's hud studio",
-  "key.hud-studio.zoom": "Zoom (hold)",
-  "key.hud-studio.freecam": "Freecam (toggle)",
-  "key.hud-studio.freelook": "Freelook (hold)"
+  "key.category.hud-studio.tweaks": "Ball's HUD Studio",
+  "key.categories.hud-studio.tweaks": "Ball's HUD Studio",
+  "key.hud-studio.zoom": "Zoom (Hold)",
+  "key.hud-studio.freecam": "Freecam (Toggle)",
+  "key.hud-studio.freelook": "Freelook (Hold)",
+  "key.category.hud-studio.navigation": "Ball's HUD Studio: Navigation",
+  "key.categories.hud-studio.navigation": "Ball's HUD Studio: Navigation",
+  "key.hud-studio.new_waypoint": "New Waypoint",
+  "key.hud-studio.waypoints": "Waypoint Menu",
+  "key.hud-studio.world_map": "World Map"
 }

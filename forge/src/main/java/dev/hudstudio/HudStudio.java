@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(
    modid = "hud-studio",
    name = "ball's hud studio",
-   version = "1.8.0-forge1.8.9",
+   version = "1.9",
    clientSideOnly = true,
    acceptedMinecraftVersions = "[1.8.9]",
    acceptableRemoteVersions = "*"

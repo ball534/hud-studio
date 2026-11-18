@@ -27,7 +27,7 @@ public final class HudWidgets {
     public static String slotName(int slot) {
         return switch(slot) {
             case 36 -> "Boots";case 37 -> "Leggings";case 38 -> "Chestplate";case 39 -> "Helmet";case 40 -> "Offhand";
-            default -> slot<9?"Hotbar "+(slot+1):"Inventory · row "+((slot-9)/9+1)+", slot "+((slot-9)%9+1);
+            default -> slot<9?"Hotbar "+(slot+1):"Inventory · Row "+((slot-9)/9+1)+", Slot "+((slot-9)%9+1);
         };
     }
     public static ItemStack stack(int slot) {
@@ -112,7 +112,7 @@ public final class HudWidgets {
                 g.fill(0,13,182,19,0xff333333);g.fill(1,14,138,18,0xffdddddd);
             }
             case "player_tab" -> {
-                g.fill(0,0,280,120,0xaa000000);g.centeredText(mc.font,"Player tab",140,6,0xffffffff);
+                g.fill(0,0,280,120,0xaa000000);g.centeredText(mc.font,"Player Tab",140,6,0xffffffff);
                 for(int i=0;i<12;i++) StudioUi.text(g,"Player "+(i+1),8+(i/6)*140,24+(i%6)*15,0xffdddddd);
             }
             case "effects" -> {
@@ -136,8 +136,9 @@ public final class HudWidgets {
     }
     private static String key(net.minecraft.client.KeyMapping k) {return k.getTranslatedKeyMessage().getString();}
     private static void tile(GuiGraphicsExtractor g,int x,int y,int w,int h,String label,boolean pressed) {
-        int color=pressed?StudioTheme.accent():StudioTheme.color();
-        StudioUi.box(g,x,y,w,h,StudioTheme.alpha(color));
-        StudioUi.centered(g,label,x+w/2f,y+(h-8)/2f,w-6,1f,StudioTheme.textOn(color));
+        int background=StudioTheme.color();
+        int foreground=StudioTheme.textOn(background);
+        StudioUi.box(g,x,y,w,h,StudioTheme.alpha(pressed?foreground:background));
+        StudioUi.centered(g,label,x+w/2f,y+(h-8)/2f,w-6,1f,pressed?0xff000000|(background&0xffffff):foreground);
     }
 }

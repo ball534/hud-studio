@@ -3,8 +3,33 @@ allprojects {
     afterEvaluate {
         loom.runs.client.runDir('build/client-test')
         sourceSets.client.java.srcDir('tests/client/java')
+        if (project.hasProperty('compatibilityClient')) {
+            tasks.register('compatibilityModJar', Jar) {
+                archiveFileName = 'hud-studio-compatibility.jar'
+                destinationDirectory = layout.buildDirectory.dir('compatibility')
+                from sourceSets.main.output
+                from(sourceSets.client.output) { exclude '**/*SmokeTest*' }
+            }
+            tasks.register('compatibilityTestJar', Jar) {
+                archiveFileName = 'hud-studio-test.jar'
+                destinationDirectory = layout.buildDirectory.dir('compatibility')
+                from 'tests/client/mod'
+                from(sourceSets.client.output) { include '**/*SmokeTest*' }
+            }
+        }
         tasks.named('runClient') {
+            if(project.hasProperty('visualRevision')) jvmArgs '-Dhudstudio.visualRevision=true'
+            if(project.hasProperty('freecamRevision')) jvmArgs '-Dhudstudio.freecamRevision=true'
             jvmArgs '-Dfabric.client.gametest', '-Dfabric.client.gametest.modid=hud-studio-test', "-Dfabric.addMods=${project.file('tests/client/mod').absolutePath}"
+            // Essential's loader tries to remap already unobfuscated 26.3 classes
+            // in development mode. Launch Knot directly for modpack validation.
+            if (project.hasProperty('compatibilityClient')) {
+                dependsOn 'compatibilityModJar', 'compatibilityTestJar'
+                mainClass = 'net.fabricmc.loader.impl.launch.knot.KnotClient'
+                jvmArgs '-Dfabric.development=false'
+                jvmArgs "-Dfabric.addMods=${project.file('build/compatibility').absolutePath}${File.pathSeparator}${classpath.files.findAll { it.name.endsWith('.jar') }.join(File.pathSeparator)}"
+                args '--assetIndex', '26.3-34', '--assetsDir', new File(gradle.gradleUserHomeDir, 'caches/fabric-loom/assets').absolutePath
+            }
         }
     }
 }
